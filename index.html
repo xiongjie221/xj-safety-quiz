@@ -1,0 +1,7812 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>信息安规 · 模拟测试与刷题练习</title>
+<style>
+:root {
+  --primary: #1a73e8;
+  --primary-dark: #1557b0;
+  --success: #34a853;
+  --danger: #ea4335;
+  --warning: #fbbc04;
+  --bg: #f0f2f5;
+  --card: #ffffff;
+  --text: #1f2937;
+  --text-secondary: #6b7280;
+  --border: #e5e7eb;
+  --shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+.header {
+  background: linear-gradient(135deg, #1a73e8, #4285f4);
+  color: white;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 12px rgba(26,115,232,0.3);
+}
+.header h1 { font-size: 20px; font-weight: 700; }
+.header .subtitle { font-size: 13px; opacity: 0.85; margin-top: 2px; }
+.home { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+.home-title { text-align: center; font-size: 28px; font-weight: 800; margin-bottom: 8px; }
+.home-desc { text-align: center; color: var(--text-secondary); margin-bottom: 40px; font-size: 15px; }
+.mode-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 32px; }
+@media (max-width: 768px) { .mode-grid { grid-template-columns: 1fr; } }
+.mode-card {
+  background: var(--card); border-radius: 16px; padding: 28px 20px;
+  box-shadow: var(--shadow); cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s; border: 2px solid transparent; text-align: center;
+}
+.mode-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); border-color: var(--primary); }
+.mode-card .icon { font-size: 44px; margin-bottom: 12px; }
+.mode-card h2 { font-size: 20px; margin-bottom: 8px; }
+.mode-card p { color: var(--text-secondary); font-size: 13px; line-height: 1.5; }
+.mode-card .badge-count {
+  display: inline-block; background: var(--danger); color: white;
+  border-radius: 12px; padding: 2px 10px; font-size: 13px; font-weight: 700; margin-top: 8px;
+}
+.mode-card .badge-count.hidden { display: none; }
+.stats-bar { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+.stat-item { background: var(--card); border-radius: 12px; padding: 16px 24px; box-shadow: var(--shadow); text-align: center; min-width: 110px; }
+.stat-item .num { font-size: 28px; font-weight: 800; color: var(--primary); }
+.stat-item .label { font-size: 13px; color: var(--text-secondary); }
+.exam-header {
+  background: var(--card); padding: 12px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06); position: sticky; top: 0; z-index: 90;
+}
+.exam-progress { font-size: 15px; font-weight: 600; }
+.exam-timer { font-size: 18px; font-weight: 700; color: var(--danger); font-variant-numeric: tabular-nums; }
+.exam-timer.normal { color: var(--text); }
+.question-container { max-width: 800px; margin: 0 auto; padding: 24px 20px 80px; }
+.question-card { background: var(--card); border-radius: 16px; padding: 28px 24px; box-shadow: var(--shadow); margin-bottom: 20px; }
+.question-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+.q-num {
+  background: var(--primary); color: white; border-radius: 50%;
+  width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; flex-shrink: 0;
+}
+.q-type-tag { padding: 2px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+.badge-single { background: #e8f0fe; color: #1a73e8; }
+.badge-multi { background: #fef7e0; color: #b06000; }
+.badge-judge { background: #e6f4ea; color: #137333; }
+.q-stem { font-size: 17px; line-height: 1.8; margin-bottom: 24px; }
+.q-stem .blank { color: var(--primary); font-weight: 700; }
+.options-list { display: flex; flex-direction: column; gap: 12px; }
+.option-item {
+  display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px;
+  border: 2px solid var(--border); border-radius: 12px; cursor: pointer;
+  transition: all 0.15s; font-size: 15px; line-height: 1.6;
+}
+.option-item:hover { border-color: var(--primary); background: #f8faff; }
+.option-item.selected { border-color: var(--primary); background: #e8f0fe; }
+.option-item.correct { border-color: var(--success); background: #e6f4ea; }
+.option-item.wrong { border-color: var(--danger); background: #fce8e6; }
+.option-label {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 14px; flex-shrink: 0; background: #f1f3f4; color: var(--text);
+}
+.option-item.selected .option-label { background: var(--primary); color: white; }
+.option-item.correct .option-label { background: var(--success); color: white; }
+.option-item.wrong .option-label { background: var(--danger); color: white; }
+.multi-hint { font-size: 13px; color: #b06000; background: #fef7e0; padding: 6px 12px; border-radius: 8px; margin-bottom: 12px; }
+.judge-btns { display: flex; gap: 16px; }
+.judge-btn {
+  flex: 1; padding: 20px; border: 2px solid var(--border); border-radius: 12px;
+  text-align: center; font-size: 18px; font-weight: 700; cursor: pointer;
+  transition: all 0.15s; background: var(--card);
+}
+.judge-btn:hover { border-color: var(--primary); }
+.judge-btn.selected.correct { border-color: var(--success); background: #e6f4ea; color: var(--success); }
+.judge-btn.selected.wrong { border-color: var(--danger); background: #fce8e6; color: var(--danger); }
+.judge-btn.reveal-correct { border-color: var(--success); background: #e6f4ea; }
+.answer-panel {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 96;
+  background: #f8faff; border-top: 2px solid #d0e3fd;
+  padding: 14px 20px; max-height: 45vh; overflow-y: auto;
+  animation: slideUp 0.3s ease; box-shadow: 0 -4px 16px rgba(0,0,0,0.08);
+}
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.answer-panel .answer-row { margin-bottom: 8px; font-size: 14px; }
+.answer-panel .judge-result { font-size: 17px; padding: 4px 0; margin-bottom: 8px; }
+.answer-panel .answer-value.explanation-detail { font-size: 14px; line-height: 1.6; }
+.answer-panel .answer-value.mnemonic { font-size: 14px; padding: 6px 10px; }
+.question-card { padding: 20px 20px; }
+.q-stem { font-size: 16px; margin-bottom: 16px; line-height: 1.7; }
+.option-item { padding: 10px 14px; font-size: 14px; }
+.judge-btn { padding: 16px; font-size: 16px; }
+.question-container { padding: 16px 20px 50vh; }
+@keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.answer-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 12px; font-size: 15px; }
+.answer-row:last-child { margin-bottom: 0; }
+.answer-label { font-weight: 700; color: var(--primary); white-space: nowrap; flex-shrink: 0; }
+.answer-value { color: var(--text); }
+.answer-value.mnemonic {
+  background: linear-gradient(135deg, #fff8e1, #fff3c4); padding: 8px 14px;
+  border-radius: 8px; border: 1px solid #fde293; font-weight: 600; color: #8b6914;
+}
+.answer-value.correct-answer { color: var(--success); font-weight: 700; }
+.answer-value.explanation-detail { color: var(--text); line-height: 1.8; }
+.judge-result { font-size: 20px; font-weight: 800; text-align: center; padding: 8px 0; border-radius: 8px; margin-bottom: 12px; }
+.judge-result.right { color: var(--success); background: #e6f4ea; }
+.judge-result.wrong { color: var(--danger); background: #fce8e6; }
+.btn { padding: 12px 28px; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-primary:disabled { background: #ccc; cursor: not-allowed; }
+.btn-secondary { background: var(--card); color: var(--text); border: 2px solid var(--border); }
+.btn-secondary:hover { border-color: var(--primary); color: var(--primary); }
+.btn-secondary:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-danger { background: var(--danger); color: white; }
+.nav-bar { display: flex; justify-content: space-between; gap: 12px; margin-top: 20px; }
+.sticky-nav {
+  position: sticky; top: 0; z-index: 95;
+  background: var(--card); padding: 10px 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  max-width: 800px; margin: 0 auto;
+  display: flex; justify-content: space-between; gap: 12px; align-items: center;
+}
+.sticky-nav .submit-wrap { display: flex; gap: 12px; }
+.score-panel { max-width: 600px; margin: 60px auto; text-align: center; background: var(--card); border-radius: 20px; padding: 48px 32px; box-shadow: var(--shadow); }
+.score-circle {
+  width: 140px; height: 140px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 24px; font-size: 42px; font-weight: 800; border: 6px solid;
+}
+.score-circle.pass { color: var(--success); border-color: var(--success); background: #e6f4ea; }
+.score-circle.fail { color: var(--danger); border-color: var(--danger); background: #fce8e6; }
+.score-detail { display: flex; justify-content: center; gap: 32px; margin: 24px 0; }
+.score-detail-item { text-align: center; }
+.score-detail-item .num { font-size: 32px; font-weight: 800; }
+.score-detail-item .label { font-size: 14px; color: var(--text-secondary); }
+.filter-bar { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 20px; }
+.filter-btn {
+  padding: 8px 18px; border: 2px solid var(--border); border-radius: 8px;
+  background: var(--card); font-size: 14px; cursor: pointer; transition: all 0.15s;
+}
+.filter-btn.active { border-color: var(--primary); background: #e8f0fe; color: var(--primary); font-weight: 600; }
+.back-btn { display: inline-flex; align-items: center; gap: 6px; background: none; border: none; color: white; font-size: 15px; cursor: pointer; opacity: 0.9; }
+.back-btn:hover { opacity: 1; }
+.hidden { display: none !important; }
+.empty-state { text-align: center; padding: 80px 20px; color: var(--text-secondary); }
+.empty-state .icon { font-size: 60px; margin-bottom: 16px; }
+.cheer-popup {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(0);
+  z-index: 9999; text-align: center; pointer-events: none;
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s;
+  opacity: 0;
+}
+.cheer-popup.show { transform: translate(-50%,-50%) scale(1); opacity: 1; }
+.cheer-emoji { font-size: 72px; line-height: 1.2; }
+.cheer-text {
+  font-size: 24px; font-weight: 800; margin-top: 8px;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.cheer-popup.right .cheer-text { color: var(--success); }
+.cheer-popup.wrong .cheer-text { color: var(--primary); }
+.cheer-sub { font-size: 15px; color: var(--text-secondary); margin-top: 4px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <div>
+    <h1>📋 信息安规题库</h1>
+    <div class="subtitle">国家电网有限公司电力安全工作规程（第9部分：信息部分）</div>
+  </div>
+  <button class="back-btn hidden" id="backHome" onclick="goHome()">← 返回首页</button>
+</div>
+
+  <div class="cheer-popup" id="cheerPopup"><div class="cheer-emoji" id="cheerEmoji"></div><div class="cheer-text" id="cheerText"></div><div class="cheer-sub" id="cheerSub"></div></div>
+
+<div class="home" id="homePage">
+  <div class="home-title">信息安规 · 模拟测试与刷题练习</div>
+  <div class="home-desc">共 285 题 · 单选 125 · 多选 60 · 判断 100</div>
+  <div class="mode-grid">
+    <div class="mode-card" onclick="startExam()">
+      <div class="icon">📝</div>
+      <h2>模拟测试</h2>
+      <p>随机抽取 100 题<br>限时 20 分钟<br>90 分及格<br>交卷后查看详细解析</p>
+    </div>
+    <div class="mode-card" onclick="startPractice()">
+      <div class="icon">📚</div>
+      <h2>刷题练习</h2>
+      <p>逐题作答<br>即时查看答案与口诀<br>按题型筛选<br>自由翻页</p>
+    </div>
+    <div class="mode-card" onclick="startWrongPractice()">
+      <div class="icon">❌</div>
+      <h2>错题练习</h2>
+      <p>自动归集答错的题目<br>针对薄弱环节<br>反复巩固</p>
+      <span class="badge-count hidden" id="wrongBadge">0 错题</span>
+    </div>
+  </div>
+  <div class="stats-bar">
+    <div class="stat-item"><div class="num">285</div><div class="label">总题数</div></div>
+    <div class="stat-item"><div class="num">125</div><div class="label">单选题</div></div>
+    <div class="stat-item"><div class="num">60</div><div class="label">多选题</div></div>
+    <div class="stat-item"><div class="num">100</div><div class="label">判断题</div></div>
+  </div>
+</div>
+
+<div class="hidden" id="examPage">
+  <div class="exam-header">
+    <div class="exam-progress" id="examProgress">第 1 / 100 题</div>
+    <div class="exam-timer" id="examTimer">⏱ 20:00</div>
+  </div>
+  <div class="sticky-nav" id="examStickyNav">
+    <button class="btn btn-secondary" id="examPrev" onclick="examPrev()">上一题</button>
+    <div class="submit-wrap">
+      <button class="btn btn-danger" onclick="submitExam()">交卷</button>
+      <button class="btn btn-primary" id="examNext" onclick="examNext()">下一题</button>
+    </div>
+  </div>
+  <div class="question-container" id="examContainer"></div>
+</div>
+
+<div class="hidden" id="resultPage">
+  <div class="score-panel" id="scorePanel"></div>
+  <div style="text-align:center;margin-bottom:40px;">
+    <button class="btn btn-secondary" onclick="reviewExam()" style="margin-right:12px;">查看解析</button>
+    <button class="btn btn-primary" onclick="startExam()">再考一次</button>
+    <button class="btn btn-secondary" onclick="goHome()" style="margin-left:12px;">返回首页</button>
+  </div>
+</div>
+
+<div class="hidden" id="reviewPage">
+  <div class="exam-header">
+    <div class="exam-progress" id="reviewProgress">解析 1 / 100</div>
+    <div style="font-size:15px;font-weight:600;color:var(--text-secondary);">答题回顾</div>
+  </div>
+  <div class="sticky-nav" id="reviewStickyNav">
+    <button class="btn btn-secondary" id="reviewPrev" onclick="reviewPrev()">上一题</button>
+    <button class="btn btn-primary" id="reviewNext" onclick="reviewNext()">下一题</button>
+  </div>
+  <div class="question-container" id="reviewContainer"></div>
+  <div style="text-align:center;margin-bottom:60px;">
+    <button class="btn btn-primary" onclick="startExam()">再考一次</button>
+    <button class="btn btn-secondary" onclick="goHome()" style="margin-left:12px;">返回首页</button>
+  </div>
+</div>
+
+<div class="hidden" id="practicePage">
+  <div class="exam-header">
+    <div class="exam-progress" id="practiceProgress">第 1 题</div>
+    <div style="font-size:14px;color:var(--text-secondary);" id="practiceFilter">全部题型</div>
+  </div>
+  <div class="filter-bar" id="practiceFilters" style="padding-top:16px;">
+    <button class="filter-btn active" onclick="filterPractice('all', this)">全部</button>
+    <button class="filter-btn" onclick="filterPractice('单选题', this)">单选题</button>
+    <button class="filter-btn" onclick="filterPractice('多选题', this)">多选题</button>
+    <button class="filter-btn" onclick="filterPractice('判断题', this)">判断题</button>
+    <button class="filter-btn" id="wrongFilterBtn" onclick="filterPractice('wrong', this)">错题重练</button>
+  </div>
+  <div class="sticky-nav" id="practiceStickyNav">
+    <button class="btn btn-secondary" id="practicePrev" onclick="practicePrev()">上一题</button>
+    <button class="btn btn-primary" id="practiceNext" onclick="practiceNext()">下一题</button>
+  </div>
+  <div class="question-container" id="practiceContainer"></div>
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    "id": 1,
+    "type": "单选题",
+    "stem": "根据信息安规规定，办理信息工作票延期手续，应在信息工作票的有效期内，由工作负责人向（ ）提出申请，得到同意后给予办理。",
+    "options": [
+      {
+        "label": "A",
+        "text": "业务管理单位"
+      },
+      {
+        "label": "B",
+        "text": "信息运维单位"
+      },
+      {
+        "label": "C",
+        "text": "工作票签发人"
+      },
+      {
+        "label": "D",
+        "text": "工作许可人"
+      }
+    ],
+    "answer": "D",
+    "basis": "信息安规5.2.6 b)",
+    "analysis": "",
+    "mnemonic": "延期找许可，有效期内办。【签发审票批·许可现场启·负责人带队监护】签发人不到现场审票批准；许可人落实安措许可开工；负责人现场带队管人。三者不得兼任！",
+    "explanation": "工作票延期涉及安全措施有效期的变更，属于许可人职责范围。口诀：延期找许可。签发人负责审票不到现场，负责人带队干活，延期审批是许可人的活。"
+  },
+  {
+    "id": 2,
+    "type": "单选题",
+    "stem": "根据信息安规规定，填用信息工作票的工作，工作负责人应得到（ ）的许可，并确认工作票所列的安全措施全部完成后，方可开始工作。",
+    "options": [
+      {
+        "label": "A",
+        "text": "工作票签发人"
+      },
+      {
+        "label": "B",
+        "text": "工作许可人"
+      },
+      {
+        "label": "C",
+        "text": "工作监护人"
+      },
+      {
+        "label": "D",
+        "text": "工作班人员"
+      }
+    ],
+    "answer": "B",
+    "basis": "信息安规5.3.5",
+    "analysis": "",
+    "mnemonic": "开工许可人，措施全到位。【签发审票批·许可现场启·负责人带队监护】签发人不到现场审票批准；许可人落实安措许可开工；负责人现场带队管人。三者不得兼任！",
+    "explanation": "开工前必须经工作许可人许可。许可人负责确认安全措施已全部落实后下令开工。口诀：许可现场启。签发人审票不到现场，负责人是带队干活的不是许可开工的。"
+  },
+  {
+    "id": 3,
+    "type": "单选题",
+    "stem": "根据信息安规规定，信息系统故障紧急抢修时，工作票可不经工作票签发人书面签发，但应经（ ）同意，并在工作票备注栏中注明。",
+    "options": [
+      {
+        "label": "A",
+        "text": "工作许可人"
+      },
+      {
+        "label": "B",
+        "text": "工作票签发人"
+      },
+      {
+        "label": "C",
+        "text": "信息运维部门"
+      },
+      {
+        "label": "D",
+        "text": "业务主管部门（业务归口管理部门）"
+      }
+    ],
+    "answer": "B",
+    "basis": "信息安规5.2.5 e)",
+    "analysis": "",
+    "mnemonic": "紧急抢修免签发，备注栏里要注明。【签发审票批·许可现场启·负责人带队监护】签发人不到现场审票批准；许可人落实安措许可开工；负责人现场带队管人。三者不得兼任！",
+    "explanation": "紧急抢修时可不经签发人书面签发，但仍需经签发人同意（口头等方式）并在备注栏注明。签发人事前审票批准，紧急时简化书面流程但不绕过签发人本人。"
+  },
+  {
+    "id": 4,
+    "type": "单选题",
+    "stem": "根据信息安规规定，需要变更工作班成员时，应经（ ）同意并记录在工作票备注栏中。",
+    "options": [
+      {
+        "label": "A",
+        "text": "工作负责人"
+      },
+      {
+        "label": "B",
+        "text": "工作票签发人"
+      },
+      {
+        "label": "C",
+        "text": "工作许可人"
+      },
+      {
+        "label": "D",
+        "text": "以上都不对"
+      }
+    ],
+    "answer": "A",
+    "basis": "信息安规5.2.5 b)",
+    "analysis": "",
+    "mnemonic": "变成员找负责，备注栏里要记录。【签发审票批·许可现场启·负责人带队监护】签发人不到现场审票批准；许可人落实安措许可开工；负责人现场带队管人。三者不得兼任！",
+    "explanation": "变更工作班成员是现场人事调整，属于工作负责人的职责。口诀：负责人现场管队伍。签发人不到现场，许可人管安措许可，成员变更由负责人决定并记录在备注栏。"
+  },
+  {
+    "id": 5,
+    "type": "单选题",
+    "stem": "根据信息安规规定，以下不属于工作班成员安全责任的是（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "熟悉工作内容、工作流程，清楚工作中的风险点和安全措施，并在工作票上签名确认"
+      },
+      {
+        "label": "B",
+        "text": "服从工作负责人的指挥，严格遵守本文件和劳动纪律，在确定的作业范围内工作，对自己在工作中的行为负责，互相关心工作安全"
+      },
+      {
+        "label": "C",
+        "text": "正确使用工器具、调试计算机（或其他专用设备）、外接存储设备以及软件工具等"
+      },
+      {
+        "label": "D",
+        "text": "确认工作票所列的安全措施已实施"
+      }
+    ],
+    "answer": "D",
+    "basis": "信息安规5.2.8",
+    "analysis": "",
+    "mnemonic": "班成员不确认安措，那是许可人的活。【签发审票批·许可现场启·负责人带队监护】签发人不到现场审票批准；许可人落实安措许可开工；负责人现场带队管人。三者不得兼任！",
+    "explanation": "工作班成员职责：熟悉工作内容和风险、服从指挥、正确使用工器具。\"确认安全措施已实施\"是工作许可人的职责，不是班成员的。口诀：许可现场启——安措落实是许可人的活。"
+  },
+  {
+    "id": 6,
+    "type": "单选题",
+    "stem": "根据信息安规规定，以下不属于工作负责人安全责任的是（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确、安全地组织工作检查工作票所列安全措施是否正确完备，是否符合现场实际条件，必要时予以补充完善"
+      },
+      {
+        "label": "B",
+        "text": "工作前，对工作班成员进行工作任务、安全措施和风险点告知，并确认每个工作班成员都已清楚并签名"
+      },
+      {
+        "label": "C",
+        "text": "监督工作班成员遵守本文件，正确使用工器具、调试计算机（或其他专用设备）、外接存储设备以及软件工具等"
+      },
+      {
+        "label": "D",
+        "text": "确认工作票所列的安全措施已实施"
+      }
+    ],
+    "answer": "D",
+    "basis": "信息安规5.2.8",
+    "analysis": "",
+    "mnemonic": "负责人不确认安措，那是许可人的活。【签发审票批·许可现场启·负责人带队监护】签发人不到现场审票批准；许可人落实安措许可开工；负责人现场带队管人。三者不得兼任！",
+    "explanation": "工作负责人职责：组织工作、告知风险、监督班成员。\"确认安全措施已实施\"是工作许可人的职责。口诀：许可现场启——安措落实归许可人，负责人带队监护。"
+  },
+  {
+    "id": 7,
+    "type": "单选题",
+    "stem": "根据信息安规规定，在工作票制度中，下列哪项工作可不填用工作票，使用其他书面记录、电子信息或按口头、电话命令执行即可（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "影响业务系统、信息网络等运行的主备（节点）切换试验、演练工作"
+      },
+      {
+        "label": "B",
+        "text": "在未投运或已停运的信息机房、蓄电池室、电源室等场所内开展墙面及地面粉刷、吊顶更换、地板更换、窗户封堵、水管堵漏、防水补漏等基础设施的小修工作"
+      },
+      {
+        "label": "C",
+        "text": "信息机房不间断电源及其辅助设施的投运退运、容量变更、充放电试验等检修工作"
+      },
+      {
+        "label": "D",
+        "text": "信息机房内影响信息系统安全运行的空调、电气设备等基础设施上的检修工作"
+      }
+    ],
+    "answer": "B",
+    "basis": "信息安规5.2.2",
+    "analysis": "",
+    "mnemonic": "停运机房小修可免票，其余统统要工作票",
+    "explanation": "在未投运或已停运的信息机房内开展基础设施小修（粉刷、吊顶更换等），因不影响运行中的信息系统，风险较低，可不填用工作票。其他选项均涉及运行中的系统或设备，必须填用工作票。"
+  },
+  {
+    "id": 8,
+    "type": "单选题",
+    "stem": "根据信息安规规定，在原工作票的安全措施范围内增加工作任务时，应由（ ）征得（ ）和（ ）同意，并在工作票上增填工作项目。",
+    "options": [
+      {
+        "label": "A",
+        "text": "工作负责人、工作票签发人、工作许可人"
+      },
+      {
+        "label": "B",
+        "text": "工作票签发人、工作负责人、工作许可人"
+      },
+      {
+        "label": "C",
+        "text": "工作许可人、工作负责人、工作票签发人"
+      },
+      {
+        "label": "D",
+        "text": "以上都不对"
+      }
+    ],
+    "answer": "A",
+    "basis": "信息安规5.2.5 c)",
+    "analysis": "",
+    "mnemonic": "增任务：负责人征得签发人+许可人。三者协作。【签发审票批·许可现场启·负责人带队监护】签发人不到现场审票批准；许可人落实安措许可开工；负责人现场带队管人。三者不得兼任！",
+    "explanation": "在安全措施范围内增加任务，需三方协作：负责人（执行方）征得签发人（确认措施覆盖）和许可人（确认现场安全）同意。三者各司其职，不能兼任。"
+  },
+  {
+    "id": 9,
+    "type": "单选题",
+    "stem": "根据信息安规规定，作业人员应被告知其作业现场和工作岗位存在的（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "安全风险、应急预案、安全注意事项、事故防范措施"
+      },
+      {
+        "label": "B",
+        "text": "应急预案事故防范措施、安全注意事项、紧急情况下应当采取的应急措施"
+      },
+      {
+        "label": "C",
+        "text": "安全风险、应急预案、事故防范措施、紧急情况下应当采取的应急措施"
+      },
+      {
+        "label": "D",
+        "text": "安全风险、安全注意事项、事故防范措施、紧急情况下应当采取的应急措施"
+      }
+    ],
+    "answer": "D",
+    "basis": "信息安规4.4.3",
+    "analysis": "",
+    "mnemonic": "告知四项：风险、注意、防范、应急",
+    "explanation": "作业人员应被告知四项内容：安全风险、安全注意事项、事故防范措施、紧急情况下的应急措施。注意不是\"应急预案\"而是\"安全注意事项\"，两者不同。"
+  },
+  {
+    "id": 10,
+    "type": "单选题",
+    "stem": "根据信息安规规定，作业人员有权（ ）违章指挥和强令冒险作业。",
+    "options": [
+      {
+        "label": "A",
+        "text": "停止"
+      },
+      {
+        "label": "B",
+        "text": "拒绝"
+      },
+      {
+        "label": "C",
+        "text": "反对"
+      },
+      {
+        "label": "D",
+        "text": "制止"
+      }
+    ],
+    "answer": "B",
+    "basis": "信息安规4.4.4",
+    "analysis": "",
+    "mnemonic": "违章强令：作业人员有权拒绝",
+    "explanation": "面对违章指挥和强令冒险作业，作业人员有权\"拒绝\"，不是停止、反对或制止。\"拒绝\"是法定的自我保护权利。"
+  },
+  {
+    "id": 11,
+    "type": "多选题",
+    "stem": "根据信息安规规定，授权应基于（ ）的原则。",
+    "options": [
+      {
+        "label": "A",
+        "text": "权限最小化"
+      },
+      {
+        "label": "B",
+        "text": "权限分离"
+      },
+      {
+        "label": "C",
+        "text": "权限最大化"
+      },
+      {
+        "label": "D",
+        "text": "权限统一"
+      }
+    ],
+    "answer": "AB",
+    "basis": "6.2.2",
+    "analysis": "",
+    "mnemonic": "授权两原则：最小化+权限分离",
+    "explanation": "授权应基于权限最小化和权限分离原则。权限最大化与安全相悖，权限统一不符合职责分离要求，因此排除CD。"
+  },
+  {
+    "id": 12,
+    "type": "多选题",
+    "stem": "根据信息安规规定，数据库检修前，应备份可能受影响的（ ）等。",
+    "options": [
+      {
+        "label": "A",
+        "text": "业务数据"
+      },
+      {
+        "label": "B",
+        "text": "配置文件"
+      },
+      {
+        "label": "C",
+        "text": "运行参数"
+      },
+      {
+        "label": "D",
+        "text": "日志文件"
+      }
+    ],
+    "answer": "ABD",
+    "basis": "6.3.4",
+    "analysis": "",
+    "mnemonic": "数据库检修备份：数据+配置+日志",
+    "explanation": "数据库检修前应备份可能受影响的业务数据、配置文件和日志文件。运行参数属于运行态信息，不属于需要备份的数据范畴。"
+  },
+  {
+    "id": 13,
+    "type": "多选题",
+    "stem": "根据信息安规规定，许可开始工作的命令应通知到工作负责人，其方法可采用：（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "当面许可"
+      },
+      {
+        "label": "B",
+        "text": "电话许可（电子信息许可）"
+      },
+      {
+        "label": "C",
+        "text": "传真许可"
+      },
+      {
+        "label": "D",
+        "text": "邮件许可"
+      }
+    ],
+    "answer": "AB",
+    "basis": "5.3.4",
+    "analysis": "",
+    "mnemonic": "开工许可人，措施全到位\n（口诀：签发审票批·许可现场启·负责人带队监护·三者不兼任）",
+    "explanation": "许可开始工作的命令可采用当面许可或电话许可（含电子信息许可）。传真和邮件方式缺乏即时确认机制，不符合安规要求。"
+  },
+  {
+    "id": 14,
+    "type": "多选题",
+    "stem": "根据信息安规规定，在信息系统上工作，保证安全的技术措施包括（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "授权"
+      },
+      {
+        "label": "B",
+        "text": "备份"
+      },
+      {
+        "label": "C",
+        "text": "验证"
+      },
+      {
+        "label": "D",
+        "text": "认证"
+      }
+    ],
+    "answer": "ABC",
+    "basis": "6.1.0",
+    "analysis": "",
+    "mnemonic": "技术措施：授权备份验证（非认证）",
+    "explanation": "保证安全的技术措施包括：授权、备份、验证。注意\"认证\"是身份鉴别手段，不属于此处定义的技术措施范畴。"
+  },
+  {
+    "id": 15,
+    "type": "多选题",
+    "stem": "根据信息安规规定，在信息系统上工作，保证安全的组织措施有哪些（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "工作票制度"
+      },
+      {
+        "label": "B",
+        "text": "工作许可制度"
+      },
+      {
+        "label": "C",
+        "text": "工作监护制度"
+      },
+      {
+        "label": "D",
+        "text": "工作终结制度"
+      }
+    ],
+    "answer": "ABD",
+    "basis": "5.1.0",
+    "analysis": "",
+    "mnemonic": "组织措施：票+许可+监护+终结（无操作票）",
+    "explanation": "保证安全的组织措施包括：工作票制度、工作许可制度、工作监护制度、工作终结制度。注意没有\"操作票制度\"，操作票属于电力安规范畴。"
+  },
+  {
+    "id": 16,
+    "type": "单选题",
+    "stem": "《国家电网有限公司电力安全工作规程第9部分：信息部分》规定了从事信息相关工作的安全组织措施、安全技术措施、信息系统及相关（   ）工作的安全要求。",
+    "options": [
+      {
+        "label": "A",
+        "text": "设备"
+      },
+      {
+        "label": "B",
+        "text": "场所"
+      },
+      {
+        "label": "C",
+        "text": "队伍"
+      },
+      {
+        "label": "D",
+        "text": "人员"
+      }
+    ],
+    "answer": "A",
+    "basis": "信息安规1",
+    "analysis": "",
+    "mnemonic": "技术措施：授权备份验证（非认证）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为A（设备）。B. 场所不正确；C. 队伍不正确；D. 人员不正确。依据信息安规1。"
+  },
+  {
+    "id": 17,
+    "type": "单选题",
+    "stem": "《国家电网有限公司电力安全工作规程第9部分：信息部分》适用于国家电网有限公司（简称国家电网公司）系统各单位（ ）的信息系统及相关场所，其他相关系统可参照执行。",
+    "options": [
+      {
+        "label": "A",
+        "text": "未投运"
+      },
+      {
+        "label": "B",
+        "text": "备用"
+      },
+      {
+        "label": "C",
+        "text": "运行中"
+      },
+      {
+        "label": "D",
+        "text": "退役"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规1范围",
+    "analysis": "",
+    "mnemonic": "选C：运行中（1范围）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为C（运行中）。A. 未投运不正确；B. 备用不正确；D. 退役不正确。依据信息安规1范围。"
+  },
+  {
+    "id": 18,
+    "type": "单选题",
+    "stem": "《国家电网有限公司电力安全工作规程第9部分：信息部分》适用于国家电网有限公司（简称国家电网公司）系统各单位运行中的信息系统及（ ），其他相关系统可参照执行。",
+    "options": [
+      {
+        "label": "A",
+        "text": "生产设备"
+      },
+      {
+        "label": "B",
+        "text": "安全设施"
+      },
+      {
+        "label": "C",
+        "text": "办公场所"
+      },
+      {
+        "label": "D",
+        "text": "相关场所"
+      }
+    ],
+    "answer": "D",
+    "basis": "信息安规1",
+    "analysis": "",
+    "mnemonic": "选D：相关场所（1）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为D（相关场所）。A. 生产设备不正确；B. 安全设施不正确；C. 办公场所不正确。依据信息安规1。"
+  },
+  {
+    "id": 19,
+    "type": "单选题",
+    "stem": "本文件所指信息系统的构成要素包括并不限于网络设备、网络通道及线缆、（   ）、计算机、存储设备、现场终端、云平台、业务系统、商用软件、数据以及其他外围设备等。",
+    "options": [
+      {
+        "label": "A",
+        "text": "电力监控系统"
+      },
+      {
+        "label": "B",
+        "text": "安全设备"
+      },
+      {
+        "label": "C",
+        "text": "通信网管系统"
+      },
+      {
+        "label": "D",
+        "text": "部署在调控中心安全Ⅲ区的信息系统"
+      }
+    ],
+    "answer": "B",
+    "basis": "信息安规3.1",
+    "analysis": "",
+    "mnemonic": "选B：安全设备（3.1）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为B（安全设备）。A. 电力监控系统不正确；C. 通信网管系统不正确；D. 部署在调控中心安全Ⅲ区的信息系统不正确。依据信息安规3.1。"
+  },
+  {
+    "id": 20,
+    "type": "单选题",
+    "stem": "各单位可根据实际情况制定《国家电网有限公司电力安全工作规程第9部分：信息部分》的实施细则，经（ ）批准后执行。",
+    "options": [
+      {
+        "label": "A",
+        "text": "职能管理部门"
+      },
+      {
+        "label": "B",
+        "text": "运维部门"
+      },
+      {
+        "label": "C",
+        "text": "本单位"
+      },
+      {
+        "label": "D",
+        "text": "安监部门"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规4.4.6",
+    "analysis": "",
+    "mnemonic": "实施细则：本单位批准后执行",
+    "explanation": "本题考查信息安规相关知识点。正确答案为C（本单位）。A. 职能管理部门不正确；B. 运维部门不正确；D. 安监部门不正确。依据信息安规4.4.6。"
+  },
+  {
+    "id": 21,
+    "type": "单选题",
+    "stem": "根据信息安规规定，（ ），应核查电源负载能力。",
+    "options": [
+      {
+        "label": "A",
+        "text": "拆接负载电缆后"
+      },
+      {
+        "label": "B",
+        "text": "不间断电源设备断电检修前"
+      },
+      {
+        "label": "C",
+        "text": "新增负载前"
+      },
+      {
+        "label": "D",
+        "text": "蓄电池组接入电源后"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规13.1.1",
+    "analysis": "",
+    "mnemonic": "选C：新增负载前（13.1.1）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为C（新增负载前）。A. 拆接负载电缆后不正确；B. 不间断电源设备断电检修前不正确；D. 蓄电池组接入电源后不正确。依据信息安规13.1.1。"
+  },
+  {
+    "id": 22,
+    "type": "单选题",
+    "stem": "根据信息安规规定，（ ）不应在管理信息区、互联网区之间交叉使用。",
+    "options": [
+      {
+        "label": "A",
+        "text": "电脑设备"
+      },
+      {
+        "label": "B",
+        "text": "打印设备"
+      },
+      {
+        "label": "C",
+        "text": "安全U盘"
+      },
+      {
+        "label": "D",
+        "text": "终端设备"
+      }
+    ],
+    "answer": "D",
+    "basis": "信息安规14.2",
+    "analysis": "",
+    "mnemonic": "选D：终端设备（14.2）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为D（终端设备）。A. 电脑设备不正确；B. 打印设备不正确；C. 安全U盘不正确。依据信息安规14.2。"
+  },
+  {
+    "id": 23,
+    "type": "单选题",
+    "stem": "根据信息安规规定，（ ）时不应更改、清除信息系统和机房动力环境告警信息。",
+    "options": [
+      {
+        "label": "A",
+        "text": "抢修"
+      },
+      {
+        "label": "B",
+        "text": "检修"
+      },
+      {
+        "label": "C",
+        "text": "巡视"
+      },
+      {
+        "label": "D",
+        "text": "消缺"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规7.1.c)",
+    "analysis": "",
+    "mnemonic": "选C：巡视（7.1.c)）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为C（巡视）。A. 抢修不正确；B. 检修不正确；D. 消缺不正确。依据信息安规7.1.c)。"
+  },
+  {
+    "id": 24,
+    "type": "单选题",
+    "stem": "根据信息安规规定，（ ）应安装防病毒、桌面管理等安全防护软件。",
+    "options": [
+      {
+        "label": "A",
+        "text": "办公计算机"
+      },
+      {
+        "label": "B",
+        "text": "服务器"
+      },
+      {
+        "label": "C",
+        "text": "打印机"
+      },
+      {
+        "label": "D",
+        "text": "网络设备"
+      }
+    ],
+    "answer": "A",
+    "basis": "信息安规14.3",
+    "analysis": "",
+    "mnemonic": "选A：办公计算机（14.3）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为A（办公计算机）。B. 服务器不正确；C. 打印机不正确；D. 网络设备不正确。依据信息安规14.3。"
+  },
+  {
+    "id": 25,
+    "type": "单选题",
+    "stem": "根据信息安规规定，（ ）应确认工作票所列的安全措施已实施。",
+    "options": [
+      {
+        "label": "A",
+        "text": "工作许可人"
+      },
+      {
+        "label": "B",
+        "text": "工作票签发人"
+      },
+      {
+        "label": "C",
+        "text": "工作负责人"
+      },
+      {
+        "label": "D",
+        "text": "工作班组成员"
+      }
+    ],
+    "answer": "A",
+    "basis": "信息安规5.2.8 c)",
+    "analysis": "",
+    "mnemonic": "确认安措已实施→许可人。【签发审票批·许可现场启·负责人带队监护】签发人不到现场审票批准；许可人落实安措许可开工；负责人现场带队管人。三者不得兼任！",
+    "explanation": "\"确认安全措施已实施\"是工作许可人的核心职责。口诀：许可现场启——许可人落实安措后许可开工。签发人审票不到现场，负责人带队干活不负责安措确认。"
+  },
+  {
+    "id": 26,
+    "type": "单选题",
+    "stem": "根据信息安规规定，（ ）应熟悉工作内容、工作流程，清楚工作中的风险点和安全措施，并在工作票上签名确认。",
+    "options": [
+      {
+        "label": "A",
+        "text": "工作负责人"
+      },
+      {
+        "label": "B",
+        "text": "工作许可人"
+      },
+      {
+        "label": "C",
+        "text": "工作班组成员"
+      },
+      {
+        "label": "D",
+        "text": "工作票签发人"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规5.2.8 d)",
+    "analysis": "",
+    "mnemonic": "选C：工作班组成员（5.2.8 d)）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为C（工作班组成员）。A. 工作负责人不正确；B. 工作许可人不正确；D. 工作票签发人不正确。依据信息安规5.2.8 d)。"
+  },
+  {
+    "id": 27,
+    "type": "单选题",
+    "stem": "根据信息安规规定，安全设备、安全系统（ ）应定期更新。",
+    "options": [
+      {
+        "label": "A",
+        "text": "运行参数"
+      },
+      {
+        "label": "B",
+        "text": "特征库"
+      },
+      {
+        "label": "C",
+        "text": "策略配置"
+      },
+      {
+        "label": "D",
+        "text": "业务数据"
+      }
+    ],
+    "answer": "B",
+    "basis": "信息安规7.2",
+    "analysis": "",
+    "mnemonic": "选B：特征库（7.2）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为B（特征库）。A. 运行参数不正确；C. 策略配置不正确；D. 业务数据不正确。依据信息安规7.2。"
+  },
+  {
+    "id": 28,
+    "type": "单选题",
+    "stem": "根据信息安规规定，按口头、电话命令执行的工作应留有（     ）或（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "录音书面派工记录"
+      },
+      {
+        "label": "B",
+        "text": "录音巡视记录"
+      },
+      {
+        "label": "C",
+        "text": "审批单、机房出入登记"
+      },
+      {
+        "label": "D",
+        "text": "会议纪要、机房出入登记"
+      }
+    ],
+    "answer": "A",
+    "basis": "信息安规5.2.3",
+    "analysis": "",
+    "mnemonic": "选A：录音书面派工（5.2.3）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为A（录音书面派工记录）。B. 录音巡视记录不正确；C. 审批单、机房出入登记不正确；D. 会议纪要、机房出入登记不正确。依据信息安规5.2.3。"
+  },
+  {
+    "id": 29,
+    "type": "单选题",
+    "stem": "根据信息安规规定，报废终端设备、员工离岗离职时留下的终端设备应交由（ ）处理。",
+    "options": [
+      {
+        "label": "A",
+        "text": "上级单位"
+      },
+      {
+        "label": "B",
+        "text": "相关单位（部门）"
+      },
+      {
+        "label": "C",
+        "text": "相关运维单位（部门）"
+      },
+      {
+        "label": "D",
+        "text": "信息运维单位（部门）"
+      }
+    ],
+    "answer": "B",
+    "basis": "信息安规14.10",
+    "analysis": "",
+    "mnemonic": "选B：相关单位（部（14.10）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为B（相关单位（部门））。A. 上级单位不正确；C. 相关运维单位（部门）不正确；D. 信息运维单位（部门）不正确。依据信息安规14.10。"
+  },
+  {
+    "id": 30,
+    "type": "单选题",
+    "stem": "根据信息安规规定，不间断电源工作，拆接负载电缆前，应断开（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "蓄电池熔断器"
+      },
+      {
+        "label": "B",
+        "text": "直流开关"
+      },
+      {
+        "label": "C",
+        "text": "旁路检修开关"
+      },
+      {
+        "label": "D",
+        "text": "负载"
+      }
+    ],
+    "answer": "D",
+    "basis": "信息安规13.1.2",
+    "analysis": "",
+    "mnemonic": "选D：负载（13.1.2）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为D（负载）。A. 蓄电池熔断器不正确；B. 直流开关不正确；C. 旁路检修开关不正确。依据信息安规13.1.2。"
+  },
+  {
+    "id": 31,
+    "type": "单选题",
+    "stem": "根据信息安规规定，不间断电源设备（ ），应先确认负荷已经转移或关闭。",
+    "options": [
+      {
+        "label": "A",
+        "text": "接入蓄电池组前"
+      },
+      {
+        "label": "B",
+        "text": "接入蓄电池组工作结束前"
+      },
+      {
+        "label": "C",
+        "text": "断电检修前"
+      },
+      {
+        "label": "D",
+        "text": "断电检修工作结束前"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规13.2.1",
+    "analysis": "",
+    "mnemonic": "选C：断电检修前（13.2.1）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为C（断电检修前）。A. 接入蓄电池组前不正确；B. 接入蓄电池组工作结束前不正确；D. 断电检修工作结束前不正确。依据信息安规13.2.1。"
+  },
+  {
+    "id": 32,
+    "type": "单选题",
+    "stem": "根据信息安规规定，拆除蓄电池连接铜排或线缆应使用（ ）的工器具。",
+    "options": [
+      {
+        "label": "A",
+        "text": "外观检查完好"
+      },
+      {
+        "label": "B",
+        "text": "试验合格"
+      },
+      {
+        "label": "C",
+        "text": "经绝缘处理"
+      },
+      {
+        "label": "D",
+        "text": "经检测机构检测"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规13.3.2",
+    "analysis": "",
+    "mnemonic": "选C：经绝缘处理（13.3.2）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为C（经绝缘处理）。A. 外观检查完好不正确；B. 试验合格不正确；D. 经检测机构检测不正确。依据信息安规13.3.2。"
+  },
+  {
+    "id": 33,
+    "type": "单选题",
+    "stem": "根据信息安规规定，电力通信和电力监控专业人员在信息场所从事各自专业工作，且不影响信息系统运行，可仅执行（ ）的安全工作规程。",
+    "options": [
+      {
+        "label": "A",
+        "text": "信息专业"
+      },
+      {
+        "label": "B",
+        "text": "通信专业"
+      },
+      {
+        "label": "C",
+        "text": "监控专业"
+      },
+      {
+        "label": "D",
+        "text": "本专业（电力通信或电力监控）"
+      }
+    ],
+    "answer": "D",
+    "basis": "信息安规4.4.2",
+    "analysis": "",
+    "mnemonic": "选D：本专业（电力（4.4.2）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为D（本专业（电力通信或电力监控））。A. 信息专业不正确；B. 通信专业不正确；C. 监控专业不正确。依据信息安规4.4.2。"
+  },
+  {
+    "id": 34,
+    "type": "单选题",
+    "stem": "根据信息安规规定，电子信息是指使用电子邮件、短信、即时通信等方式传递的数字化的文字、图像、音频、视频等信息。电子信息派工记录应（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "丢弃"
+      },
+      {
+        "label": "B",
+        "text": "销毁"
+      },
+      {
+        "label": "C",
+        "text": "不作处理"
+      },
+      {
+        "label": "D",
+        "text": "留存"
+      }
+    ],
+    "answer": "D",
+    "basis": "信息安规3.8；5.2.3",
+    "analysis": "",
+    "mnemonic": "选D：留存（3.8；5.2.3）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为D（留存）。A. 丢弃不正确；B. 销毁不正确；C. 不作处理不正确。依据信息安规3.8；5.2.3。"
+  },
+  {
+    "id": 35,
+    "type": "单选题",
+    "stem": "根据信息安规规定，发现信息系统存在严重、高危漏洞时，应及时进行（   ）并更新。",
+    "options": [
+      {
+        "label": "A",
+        "text": "测试评估"
+      },
+      {
+        "label": "B",
+        "text": "漏洞扫描"
+      },
+      {
+        "label": "C",
+        "text": "日志审计"
+      },
+      {
+        "label": "D",
+        "text": "性能优化"
+      }
+    ],
+    "answer": "A",
+    "basis": "信息安规7.3",
+    "analysis": "",
+    "mnemonic": "选A：测试评估（7.3）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为A（测试评估）。B. 漏洞扫描不正确；C. 日志审计不正确；D. 性能优化不正确。依据信息安规7.3。"
+  },
+  {
+    "id": 36,
+    "type": "单选题",
+    "stem": "根据信息安规规定，更换网络设备或安全设备的（ ）等配件时，应做好防静电措施。",
+    "options": [
+      {
+        "label": "A",
+        "text": "热插拔部件、电源模块"
+      },
+      {
+        "label": "B",
+        "text": "引擎模块、内部板卡"
+      },
+      {
+        "label": "C",
+        "text": "热插拔部件、内部板卡"
+      },
+      {
+        "label": "D",
+        "text": "引擎模块、电源模块"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规8.1",
+    "analysis": "",
+    "mnemonic": "选C：热插拔部件、（8.1）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为C（热插拔部件、内部板卡）。A. 热插拔部件、电源模块不正确；B. 引擎模块、内部板卡不正确；D. 引擎模块、电源模块不正确。依据信息安规8.1。"
+  },
+  {
+    "id": 37,
+    "type": "单选题",
+    "stem": "根据信息安规规定，更换网络设备或安全设备的热插拔部件、内部板卡等配件时，应做好（ ）措施。",
+    "options": [
+      {
+        "label": "A",
+        "text": "防静电"
+      },
+      {
+        "label": "B",
+        "text": "监护"
+      },
+      {
+        "label": "C",
+        "text": "应急"
+      },
+      {
+        "label": "D",
+        "text": "安全"
+      }
+    ],
+    "answer": "A",
+    "basis": "信息安规8.1",
+    "analysis": "",
+    "mnemonic": "选A：防静电（8.1）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为A（防静电）。B. 监护不正确；C. 应急不正确；D. 安全不正确。依据信息安规8.1。"
+  },
+  {
+    "id": 38,
+    "type": "单选题",
+    "stem": "根据信息安规规定，工作负责人一般不应变更，如确需变更的，应由原工作票签发人同意并通知（  ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "值班调控人员"
+      },
+      {
+        "label": "B",
+        "text": "工作班成员"
+      },
+      {
+        "label": "C",
+        "text": "工作许可人"
+      },
+      {
+        "label": "D",
+        "text": "运维负责人"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规5.2.5 b)",
+    "analysis": "",
+    "mnemonic": "变更负责人→签发人同意+通知许可人。【签发审票批·许可现场启·负责人带队监护】签发人不到现场审票批准；许可人落实安措许可开工；负责人现场带队管人。三者不得兼任！",
+    "explanation": "工作负责人变更需经原签发人同意（签发人负责审票批准人选）并通知许可人（许可人需知晓现场带队人变更）。口诀：签发审票批——人选由签发人把关。"
+  },
+  {
+    "id": 39,
+    "type": "单选题",
+    "stem": "根据信息安规规定，工作票制度中对于不需填用信息工作票的工作，使用其他书面记录、电子信息或按（ ）执行。",
+    "options": [
+      {
+        "label": "A",
+        "text": "工作任务"
+      },
+      {
+        "label": "B",
+        "text": "派工单"
+      },
+      {
+        "label": "C",
+        "text": "口头、电话命令"
+      },
+      {
+        "label": "D",
+        "text": "工作计划"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规5.2.3",
+    "analysis": "",
+    "mnemonic": "选C：口头、电话命（5.2.3）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为C（口头、电话命令）。A. 工作任务不正确；B. 派工单不正确；D. 工作计划不正确。依据信息安规5.2.3。"
+  },
+  {
+    "id": 40,
+    "type": "单选题",
+    "stem": "根据信息安规规定，工作票制度中对于其他不需填用信息工作票的工作，应使用哪几种（ ）书面记录执行？",
+    "options": [
+      {
+        "label": "A",
+        "text": "工单、出入记录、巡视记录"
+      },
+      {
+        "label": "B",
+        "text": "出入记录、工作记录、巡视记录"
+      },
+      {
+        "label": "C",
+        "text": "工单、工作记录、出入记录"
+      },
+      {
+        "label": "D",
+        "text": "工单、工作记录、巡视记录"
+      }
+    ],
+    "answer": "D",
+    "basis": "信息安规5.2.3",
+    "analysis": "",
+    "mnemonic": "选D：工单、工作记（5.2.3）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为D（工单、工作记录、巡视记录）。A. 工单、出入记录、巡视记录不正确；B. 出入记录、工作记录、巡视记录不正确；C. 工单、工作记录、出入记录不正确。依据信息安规5.2.3。"
+  },
+  {
+    "id": 41,
+    "type": "单选题",
+    "stem": "根据信息安规规定，工作前，作业人员应进行身份（ ）和（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "鉴别、认证"
+      },
+      {
+        "label": "B",
+        "text": "鉴别、授权"
+      },
+      {
+        "label": "C",
+        "text": "验证、授权"
+      },
+      {
+        "label": "D",
+        "text": "验证、备案"
+      }
+    ],
+    "answer": "B",
+    "basis": "信息安规6.2.1",
+    "analysis": "",
+    "mnemonic": "选B：鉴别、授权（6.2.1）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为B（鉴别、授权）。A. 鉴别、认证不正确；C. 验证、授权不正确；D. 验证、备案不正确。依据信息安规6.2.1。"
+  },
+  {
+    "id": 42,
+    "type": "单选题",
+    "stem": "根据信息安规规定，工作终结电话报告（电子信息报告）中，工作许可人和工作负责人应分别在信息工作票上记录（ ）和（ ），并复诵或电子信息回复核对无误，电话报告过程应留下电话录音，电子信息报告记录应留存。",
+    "options": [
+      {
+        "label": "A",
+        "text": "终结时间、双方姓名"
+      },
+      {
+        "label": "B",
+        "text": "工作内容、发现的问题"
+      },
+      {
+        "label": "C",
+        "text": "验证结果、存在问题"
+      },
+      {
+        "label": "D",
+        "text": "以上都不对"
+      }
+    ],
+    "answer": "A",
+    "basis": "信息安规5.4.3.b)",
+    "analysis": "",
+    "mnemonic": "选A：终结时间、双（5.4.3.b)）\n（口诀：签发审票批·许可现场启·负责人带队监护·三者不兼任）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为A（终结时间、双方姓名）。B. 工作内容、发现的问题不正确；C. 验证结果、存在问题不正确；D. 以上都不对不正确。依据信息安规5.4.3.b)。"
+  },
+  {
+    "id": 43,
+    "type": "单选题",
+    "stem": "根据信息安规规定，管理信息区、互联网区业务系统使用无线网络传输业务信息时，应具备接入认证、加密等安全机制；接入管理信息区时，应使用国家电网公司认可的（ ）等安全措施。",
+    "options": [
+      {
+        "label": "A",
+        "text": "承载通道、接入认证、隔离、过滤"
+      },
+      {
+        "label": "B",
+        "text": "承载通道、接入认证、隔离、加密"
+      },
+      {
+        "label": "C",
+        "text": "防火墙、隔离、过滤、加密"
+      },
+      {
+        "label": "D",
+        "text": "防火墙、接入认证、过滤、加密"
+      }
+    ],
+    "answer": "B",
+    "basis": "信息安规4.3.15",
+    "analysis": "",
+    "mnemonic": "选B：承载通道、接（4.3.15）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为B（承载通道、接入认证、隔离、加密）。A. 承载通道、接入认证、隔离、过滤不正确；C. 防火墙、隔离、过滤、加密不正确；D. 防火墙、接入认证、过滤、加密不正确。依据信息安规4.3.15。"
+  },
+  {
+    "id": 44,
+    "type": "单选题",
+    "stem": "根据信息安规规定，管理信息区与互联网区之间、管理信息区与生产控制区之间的边界应采用国家电网公司认可的（ ）进行安全隔离。",
+    "options": [
+      {
+        "label": "A",
+        "text": "防火墙"
+      },
+      {
+        "label": "B",
+        "text": "纵加装置"
+      },
+      {
+        "label": "C",
+        "text": "隔离装置"
+      },
+      {
+        "label": "D",
+        "text": "准入装置"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规4.3.1",
+    "analysis": "",
+    "mnemonic": "管理信息区=核心生产管理业务",
+    "explanation": "本题考查信息安规相关知识点。正确答案为C（隔离装置）。A. 防火墙不正确；B. 纵加装置不正确；D. 准入装置不正确。依据信息安规4.3.1。"
+  },
+  {
+    "id": 45,
+    "type": "单选题",
+    "stem": "根据信息安规规定，管理信息区与互联网区之间、管理信息区与生产控制区之间的边界应采用国家电网公司认可的隔离装置进行（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "物理隔离"
+      },
+      {
+        "label": "B",
+        "text": "防火墙隔离"
+      },
+      {
+        "label": "C",
+        "text": "逻辑强隔离"
+      },
+      {
+        "label": "D",
+        "text": "安全隔离"
+      }
+    ],
+    "answer": "D",
+    "basis": "信息安规4.3.1",
+    "analysis": "",
+    "mnemonic": "管理信息区=核心生产管理业务",
+    "explanation": "本题考查信息安规相关知识点。正确答案为D（安全隔离）。A. 物理隔离不正确；B. 防火墙隔离不正确；C. 逻辑强隔离不正确。依据信息安规4.3.1。"
+  },
+  {
+    "id": 46,
+    "type": "单选题",
+    "stem": "根据信息安规规定，管理信息区与互联网区之间应有（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "防火墙"
+      },
+      {
+        "label": "B",
+        "text": "纵加装置"
+      },
+      {
+        "label": "C",
+        "text": "强逻辑隔离"
+      },
+      {
+        "label": "D",
+        "text": "单向隔离"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规3.4",
+    "analysis": "",
+    "mnemonic": "选C：强逻辑隔离（3.4）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为C（强逻辑隔离）。A. 防火墙不正确；B. 纵加装置不正确；D. 单向隔离不正确。依据信息安规3.4。"
+  },
+  {
+    "id": 47,
+    "type": "单选题",
+    "stem": "根据信息安规规定，管理信息区与生产控制区之间应有（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "防火墙"
+      },
+      {
+        "label": "B",
+        "text": "纵加装置"
+      },
+      {
+        "label": "C",
+        "text": "强逻辑隔离"
+      },
+      {
+        "label": "D",
+        "text": "单向隔离"
+      }
+    ],
+    "answer": "D",
+    "basis": "信息安规3.4",
+    "analysis": "",
+    "mnemonic": "管理信息区=核心生产管理业务",
+    "explanation": "本题考查信息安规相关知识点。正确答案为D（单向隔离）。A. 防火墙不正确；B. 纵加装置不正确；C. 强逻辑隔离不正确。依据信息安规3.4。"
+  },
+  {
+    "id": 48,
+    "type": "单选题",
+    "stem": "根据信息安规规定，机房及（ ）的接地电阻、过电压保护性能，应符合Q/GDW 10343 等标准的要求。",
+    "options": [
+      {
+        "label": "A",
+        "text": "生产设备"
+      },
+      {
+        "label": "B",
+        "text": "安全设施"
+      },
+      {
+        "label": "C",
+        "text": "办公场所"
+      },
+      {
+        "label": "D",
+        "text": "相关设施"
+      }
+    ],
+    "answer": "D",
+    "basis": "信息安规4.2.4",
+    "analysis": "",
+    "mnemonic": "选D：相关设施（4.2.4）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为D（相关设施）。A. 生产设备不正确；B. 安全设施不正确；C. 办公场所不正确。依据信息安规4.2.4。"
+  },
+  {
+    "id": 49,
+    "type": "单选题",
+    "stem": "根据信息安规规定，机房及相关设施的（ ），应符合Q/GDW 10343 等标准的要求。",
+    "options": [
+      {
+        "label": "A",
+        "text": "接地电阻、消防系统"
+      },
+      {
+        "label": "B",
+        "text": "接地电阻、安防系统"
+      },
+      {
+        "label": "C",
+        "text": "过电压保护性能、防静电保护性能"
+      },
+      {
+        "label": "D",
+        "text": "接地电阻、过电压保护性能"
+      }
+    ],
+    "answer": "D",
+    "basis": "信息安规4.2.4",
+    "analysis": "",
+    "mnemonic": "选D：接地电阻、过（4.2.4）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为D（接地电阻、过电压保护性能）。A. 接地电阻、消防系统不正确；B. 接地电阻、安防系统不正确；C. 过电压保护性能、防静电保护性能不正确。依据信息安规4.2.4。"
+  },
+  {
+    "id": 50,
+    "type": "单选题",
+    "stem": "根据信息安规规定，机房内的（ ）及消防系统应符合 Q/GDW 10343 等标准的要求。",
+    "options": [
+      {
+        "label": "A",
+        "text": "照明、温度、防静电设施"
+      },
+      {
+        "label": "B",
+        "text": "照明、温度、湿度"
+      },
+      {
+        "label": "C",
+        "text": "照明、湿度、防静电设施"
+      },
+      {
+        "label": "D",
+        "text": "照明、温度、湿度、防静电设施"
+      }
+    ],
+    "answer": "D",
+    "basis": "信息安规4.2.3",
+    "analysis": "",
+    "mnemonic": "选D：照明、温度、（4.2.3）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为D（照明、温度、湿度、防静电设施）。A. 照明、温度、防静电设施不正确；B. 照明、温度、湿度不正确；C. 照明、湿度、防静电设施不正确。依据信息安规4.2.3。"
+  },
+  {
+    "id": 51,
+    "type": "单选题",
+    "stem": "根据信息安规规定，检修单位的工作负责人名单应事先送（ ）备案。",
+    "options": [
+      {
+        "label": "A",
+        "text": "安监部"
+      },
+      {
+        "label": "B",
+        "text": "本单位"
+      },
+      {
+        "label": "C",
+        "text": "检修工区"
+      },
+      {
+        "label": "D",
+        "text": "相关信息运维单位（部门）"
+      }
+    ],
+    "answer": "D",
+    "basis": "信息安规5.2.7 b)",
+    "analysis": "",
+    "mnemonic": "选D：相关信息运维（5.2.7 b)）\n（口诀：签发审票批·许可现场启·负责人带队监护·三者不兼任）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为D（相关信息运维单位（部门））。A. 安监部不正确；B. 本单位不正确；C. 检修工区不正确。依据信息安规5.2.7 b)。"
+  },
+  {
+    "id": 52,
+    "type": "单选题",
+    "stem": "根据信息安规规定，检修工作如需停运数据库、中间件、云平台组件，应确认所承载的业务（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "可停用或不受影响"
+      },
+      {
+        "label": "B",
+        "text": "正常运行或不受影响"
+      },
+      {
+        "label": "C",
+        "text": "正常运行或已转移"
+      },
+      {
+        "label": "D",
+        "text": "可停用或已转移"
+      }
+    ],
+    "answer": "D",
+    "basis": "信息安规6.4.5",
+    "analysis": "",
+    "mnemonic": "选D：可停用或已转（6.4.5）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为D（可停用或已转移）。A. 可停用或不受影响不正确；B. 正常运行或不受影响不正确；C. 正常运行或已转移不正确。依据信息安规6.4.5。"
+  },
+  {
+    "id": 53,
+    "type": "单选题",
+    "stem": "根据信息安规规定，检修工作需其他调度机构配合布置安全措施时，应由（ ）向相应调度机构履行申请手续。",
+    "options": [
+      {
+        "label": "A",
+        "text": "工作票签发人"
+      },
+      {
+        "label": "B",
+        "text": "工作负责人"
+      },
+      {
+        "label": "C",
+        "text": "工作许可人"
+      },
+      {
+        "label": "D",
+        "text": "运维值班负责人"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规5.3.3",
+    "analysis": "",
+    "mnemonic": "选C：工作许可人（5.3.3）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为C（工作许可人）。A. 工作票签发人不正确；B. 工作负责人不正确；D. 运维值班负责人不正确。依据信息安规5.3.3。"
+  },
+  {
+    "id": 54,
+    "type": "单选题",
+    "stem": "根据信息安规规定，检修工作需其他调度机构配合布置安全措施时，应由工作许可人向相应调度机构履行申请手续，并确认相关（ ）已完成后，方可办理工作许可手续。",
+    "options": [
+      {
+        "label": "A",
+        "text": "安全措施"
+      },
+      {
+        "label": "B",
+        "text": "管理措施"
+      },
+      {
+        "label": "C",
+        "text": "组织措施"
+      },
+      {
+        "label": "D",
+        "text": "技术措施"
+      }
+    ],
+    "answer": "A",
+    "basis": "信息安规5.3.3",
+    "analysis": "",
+    "mnemonic": "选A：安全措施（5.3.3）\n（口诀：签发审票批·许可现场启·负责人带队监护·三者不兼任）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为A（安全措施）。B. 管理措施不正确；C. 组织措施不正确；D. 技术措施不正确。依据信息安规5.3.3。"
+  },
+  {
+    "id": 55,
+    "type": "单选题",
+    "stem": "根据信息安规规定，检修前，应检查检修对象及受影响对象的运行状态，并核对（ ）是否一致。",
+    "options": [
+      {
+        "label": "A",
+        "text": "运行方式与检修方案"
+      },
+      {
+        "label": "B",
+        "text": "检修方式与检修方案"
+      },
+      {
+        "label": "C",
+        "text": "运行方式与检修方式"
+      },
+      {
+        "label": "D",
+        "text": "运行方案与检修方式"
+      }
+    ],
+    "answer": "A",
+    "basis": "信息安规6.4.1",
+    "analysis": "",
+    "mnemonic": "选A：运行方式与检（6.4.1）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为A（运行方式与检修方案）。B. 检修方式与检修方案不正确；C. 运行方式与检修方式不正确；D. 运行方案与检修方式不正确。依据信息安规6.4.1。"
+  },
+  {
+    "id": 56,
+    "type": "单选题",
+    "stem": "根据信息安规规定，进行数据库操作时，不应使用可能导致数据库（ ）的工具及代码。",
+    "options": [
+      {
+        "label": "A",
+        "text": "报错"
+      },
+      {
+        "label": "B",
+        "text": "宕机"
+      },
+      {
+        "label": "C",
+        "text": "重启"
+      },
+      {
+        "label": "D",
+        "text": "休眠"
+      }
+    ],
+    "answer": "B",
+    "basis": "信息安规10.2",
+    "analysis": "",
+    "mnemonic": "选B：宕机（10.2）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为B（宕机）。A. 报错不正确；C. 重启不正确；D. 休眠不正确。依据信息安规10.2。"
+  },
+  {
+    "id": 57,
+    "type": "单选题",
+    "stem": "根据信息安规规定，经医师鉴定，作业人员应无妨碍工作的（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "病症"
+      },
+      {
+        "label": "B",
+        "text": "问题"
+      },
+      {
+        "label": "C",
+        "text": "困难"
+      },
+      {
+        "label": "D",
+        "text": "情况"
+      }
+    ],
+    "answer": "A",
+    "basis": "信息安规4.1.1",
+    "analysis": "",
+    "mnemonic": "选A：病症（4.1.1）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为A（病症）。B. 问题不正确；C. 困难不正确；D. 情况不正确。依据信息安规4.1.1。"
+  },
+  {
+    "id": 58,
+    "type": "单选题",
+    "stem": "根据信息安规规定，裸露电缆线头应做（ ）处理。",
+    "options": [
+      {
+        "label": "A",
+        "text": "防水"
+      },
+      {
+        "label": "B",
+        "text": "防火"
+      },
+      {
+        "label": "C",
+        "text": "绝缘"
+      },
+      {
+        "label": "D",
+        "text": "防潮"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规13.1.3",
+    "analysis": "",
+    "mnemonic": "选C：绝缘（13.1.3）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为C（绝缘）。A. 防水不正确；B. 防火不正确；D. 防潮不正确。依据信息安规13.1.3。"
+  },
+  {
+    "id": 59,
+    "type": "单选题",
+    "stem": "根据信息安规规定，配置旁路检修开关的不间断电源设备检修时，应严格执行（ ）及（ ）顺序。",
+    "options": [
+      {
+        "label": "A",
+        "text": "停机、断电"
+      },
+      {
+        "label": "B",
+        "text": "断电、测试"
+      },
+      {
+        "label": "C",
+        "text": "测试、断电"
+      },
+      {
+        "label": "D",
+        "text": "停机、测试"
+      }
+    ],
+    "answer": "A",
+    "basis": "信息安规13.2.2",
+    "analysis": "",
+    "mnemonic": "选A：停机、断电（13.2.2）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为A（停机、断电）。B. 断电、测试不正确；C. 测试、断电不正确；D. 停机、测试不正确。依据信息安规13.2.2。"
+  },
+  {
+    "id": 60,
+    "type": "单选题",
+    "stem": "根据信息安规规定，若需变更或增设安全措施者，应（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "由工作负责人征得工作票签发人和工作许可人同意，并在工作票上增填安全措施"
+      },
+      {
+        "label": "B",
+        "text": "办理新的工作票"
+      },
+      {
+        "label": "C",
+        "text": "由工作负责人征得工作许可人许可，并在工作票上增填安全措施"
+      },
+      {
+        "label": "D",
+        "text": "以上都不对"
+      }
+    ],
+    "answer": "B",
+    "basis": "信息安规5.2.5 c)",
+    "analysis": "",
+    "mnemonic": "选B：办理新的工作（5.2.5 c)）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为B（办理新的工作票）。A. 由工作负责人征得工作票签发人和工作许可人同意，并在工作票上增填安全措施不正确；C. 由工作负责人征得工作许可人许可，并在工作票上增填安全措施不正确；D. 以上都不对不正确。依据信息安规5.2.5 c)。"
+  },
+  {
+    "id": 61,
+    "type": "单选题",
+    "stem": "根据信息安规规定，设备、业务系统接入管理信息区、互联网区应经（ ）批准，并严格遵守国家电网公司网络准入要求。",
+    "options": [
+      {
+        "label": "A",
+        "text": "信息通信调度部门"
+      },
+      {
+        "label": "B",
+        "text": "信息运维单位（部门）"
+      },
+      {
+        "label": "C",
+        "text": "分管领导"
+      },
+      {
+        "label": "D",
+        "text": "业务主管部门（业务归口管理部门）"
+      }
+    ],
+    "answer": "B",
+    "basis": "信息安规4.3.11",
+    "analysis": "",
+    "mnemonic": "选B：信息运维单位（4.3.11）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为B（信息运维单位（部门））。A. 信息通信调度部门不正确；C. 分管领导不正确；D. 业务主管部门（业务归口管理部门）不正确。依据信息安规4.3.11。"
+  },
+  {
+    "id": 62,
+    "type": "单选题",
+    "stem": "根据信息安规规定，设备、业务系统接入管理信息区、互联网区应经信息运维单位（部门）批准，并严格遵守国家电网公司（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "网络IP/MAC绑定要求"
+      },
+      {
+        "label": "B",
+        "text": "网络IP地址分配要求"
+      },
+      {
+        "label": "C",
+        "text": "网络防病毒要求"
+      },
+      {
+        "label": "D",
+        "text": "网络准入要求"
+      }
+    ],
+    "answer": "D",
+    "basis": "信息安规4.3.11",
+    "analysis": "",
+    "mnemonic": "选D：网络准入要求（4.3.11）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为D（网络准入要求）。A. 网络IP/MAC绑定要求不正确；B. 网络IP地址分配要求不正确；C. 网络防病毒要求不正确。依据信息安规4.3.11。"
+  },
+  {
+    "id": 63,
+    "type": "单选题",
+    "stem": "根据信息安规规定，升级操作系统、数据库、中间件、云平台组件版本前，应确认其（ ）及对业务系统的影响。",
+    "options": [
+      {
+        "label": "A",
+        "text": "可操作性"
+      },
+      {
+        "label": "B",
+        "text": "稳定性"
+      },
+      {
+        "label": "C",
+        "text": "安全性"
+      },
+      {
+        "label": "D",
+        "text": "兼容性"
+      }
+    ],
+    "answer": "D",
+    "basis": "信息安规6.4.6",
+    "analysis": "",
+    "mnemonic": "选D：兼容性（6.4.6）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为D（兼容性）。A. 可操作性不正确；B. 稳定性不正确；C. 安全性不正确。依据信息安规6.4.6。"
+  },
+  {
+    "id": 64,
+    "type": "单选题",
+    "stem": "根据信息安规规定，试验和推广信息（ ），应制定相应的安全措施，经本单位批准后执行。",
+    "options": [
+      {
+        "label": "A",
+        "text": "新技术"
+      },
+      {
+        "label": "B",
+        "text": "新工艺"
+      },
+      {
+        "label": "C",
+        "text": "新设备"
+      },
+      {
+        "label": "D",
+        "text": "新方案"
+      }
+    ],
+    "answer": "A",
+    "basis": "信息安规4.4.5",
+    "analysis": "",
+    "mnemonic": "选A：新技术（4.4.5）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为A（新技术）。B. 新工艺不正确；C. 新设备不正确；D. 新方案不正确。依据信息安规4.4.5。"
+  },
+  {
+    "id": 65,
+    "type": "单选题",
+    "stem": "根据信息安规规定，试验和推广信息新技术，应制定相应的（ ），经本单位批准后执行。",
+    "options": [
+      {
+        "label": "A",
+        "text": "安全措施"
+      },
+      {
+        "label": "B",
+        "text": "技术措施"
+      },
+      {
+        "label": "C",
+        "text": "组织措施"
+      },
+      {
+        "label": "D",
+        "text": "反事故措施"
+      }
+    ],
+    "answer": "A",
+    "basis": "信息安规4.4.5",
+    "analysis": "",
+    "mnemonic": "选A：安全措施（4.4.5）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为A（安全措施）。B. 技术措施不正确；C. 组织措施不正确；D. 反事故措施不正确。依据信息安规4.4.5。"
+  },
+  {
+    "id": 66,
+    "type": "单选题",
+    "stem": "根据信息安规规定，试验和推广信息新技术，应制定相应的安全措施，经（ ）批准后执行。",
+    "options": [
+      {
+        "label": "A",
+        "text": "职能管理部门"
+      },
+      {
+        "label": "B",
+        "text": "运维部门"
+      },
+      {
+        "label": "C",
+        "text": "本单位"
+      },
+      {
+        "label": "D",
+        "text": "安监部门"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规4.4.5",
+    "analysis": "",
+    "mnemonic": "选C：本单位（4.4.5）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为C（本单位）。A. 职能管理部门不正确；B. 运维部门不正确；D. 安监部门不正确。依据信息安规4.4.5。"
+  },
+  {
+    "id": 67,
+    "type": "单选题",
+    "stem": "根据信息安规规定，数据库检修工作（ ），应验证相关的业务系统运行正常。",
+    "options": [
+      {
+        "label": "A",
+        "text": "进行时"
+      },
+      {
+        "label": "B",
+        "text": "结束前"
+      },
+      {
+        "label": "C",
+        "text": "进行中"
+      },
+      {
+        "label": "D",
+        "text": "结束后"
+      }
+    ],
+    "answer": "B",
+    "basis": "信息安规10.3",
+    "analysis": "",
+    "mnemonic": "选B：结束前（10.3）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为B（结束前）。A. 进行时不正确；C. 进行中不正确；D. 结束后不正确。依据信息安规10.3。"
+  },
+  {
+    "id": 68,
+    "type": "单选题",
+    "stem": "根据信息安规规定，数据库检修前，应备份可能受影响的（ ）等。",
+    "options": [
+      {
+        "label": "A",
+        "text": "业务数据、配置文件、日志文件"
+      },
+      {
+        "label": "B",
+        "text": "业务数据、运行参数、日志文件"
+      },
+      {
+        "label": "C",
+        "text": "配置文件、日志文件、运行参数"
+      },
+      {
+        "label": "D",
+        "text": "配置文件、运行参数、日志文件"
+      }
+    ],
+    "answer": "A",
+    "basis": "信息安规6.3.4",
+    "analysis": "",
+    "mnemonic": "数据库检修备份：数据+配置+日志",
+    "explanation": "数据库检修前应备份可能受影响的业务数据、配置文件和日志文件。运行参数属于运行态信息，不属于需要备份的数据范畴。"
+  },
+  {
+    "id": 69,
+    "type": "单选题",
+    "stem": "根据信息安规规定，数据库投运前，应按需配置访问数据库的（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "VLAN"
+      },
+      {
+        "label": "B",
+        "text": "DNS"
+      },
+      {
+        "label": "C",
+        "text": "MAC地址"
+      },
+      {
+        "label": "D",
+        "text": "IP地址"
+      }
+    ],
+    "answer": "D",
+    "basis": "信息安规10.1",
+    "analysis": "",
+    "mnemonic": "选D：IP地址（10.1）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为D（IP地址）。A. VLAN不正确；B. DNS不正确；C. MAC地址不正确。依据信息安规10.1。"
+  },
+  {
+    "id": 70,
+    "type": "单选题",
+    "stem": "根据信息安规规定，提供网络服务或扩大网络边界应经（ ）批准。",
+    "options": [
+      {
+        "label": "A",
+        "text": "信息通信调度部门"
+      },
+      {
+        "label": "B",
+        "text": "分管领导"
+      },
+      {
+        "label": "C",
+        "text": "信息运维单位（部门）"
+      },
+      {
+        "label": "D",
+        "text": "业务主管部门（业务归口管理部门）"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规4.3.13",
+    "analysis": "",
+    "mnemonic": "选C：信息运维单位（4.3.13）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为C（信息运维单位（部门））。A. 信息通信调度部门不正确；B. 分管领导不正确；D. 业务主管部门（业务归口管理部门）不正确。依据信息安规4.3.13。"
+  },
+  {
+    "id": 71,
+    "type": "单选题",
+    "stem": "根据信息安规规定，填用信息工作票的工作，（ ）应会同（ ）进行运行方式检查、状态确认和功能检查，确认无遗留物件后方可办理工作终结手续。",
+    "options": [
+      {
+        "label": "A",
+        "text": "工作票签发人、工作许可人"
+      },
+      {
+        "label": "B",
+        "text": "工作负责人、工作许可人"
+      },
+      {
+        "label": "C",
+        "text": "工作票签发人、工作负责人"
+      },
+      {
+        "label": "D",
+        "text": "工作负责人、工作班成员"
+      }
+    ],
+    "answer": "B",
+    "basis": "信息安规5.4.2",
+    "analysis": "",
+    "mnemonic": "选B：工作负责人、（5.4.2）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为B（工作负责人、工作许可人）。A. 工作票签发人、工作许可人不正确；C. 工作票签发人、工作负责人不正确；D. 工作负责人、工作班成员不正确。依据信息安规5.4.2。"
+  },
+  {
+    "id": 72,
+    "type": "单选题",
+    "stem": "根据信息安规规定，填用信息工作票的工作，（ ）应向（     ）报告工作内容、发现的问题、验证结果和存在的问题等，并会同工作许可人进行运行方式检查、状态确认和功能检查，确认无遗留物件后方可办理工作终结手续。",
+    "options": [
+      {
+        "label": "A",
+        "text": "工作票签发人、工作许可人"
+      },
+      {
+        "label": "B",
+        "text": "工作负责人、工作许可人"
+      },
+      {
+        "label": "C",
+        "text": "工作票签发人、工作负责人"
+      },
+      {
+        "label": "D",
+        "text": "工作负责人、工作班成员"
+      }
+    ],
+    "answer": "B",
+    "basis": "信息安规5.4.2",
+    "analysis": "",
+    "mnemonic": "选B：工作负责人、（5.4.2）\n（口诀：签发审票批·许可现场启·负责人带队监护·三者不兼任）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为B（工作负责人、工作许可人）。A. 工作票签发人、工作许可人不正确；C. 工作票签发人、工作负责人不正确；D. 工作负责人、工作班成员不正确。依据信息安规5.4.2。"
+  },
+  {
+    "id": 73,
+    "type": "单选题",
+    "stem": "根据信息安规规定，网络设备或安全设备检修工作结束前，应验证设备及所承载的业务运行正常，（ ）符合要求。",
+    "options": [
+      {
+        "label": "A",
+        "text": "运行参数"
+      },
+      {
+        "label": "B",
+        "text": "配置文件"
+      },
+      {
+        "label": "C",
+        "text": "配置策略"
+      },
+      {
+        "label": "D",
+        "text": "日志文件"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规8.2",
+    "analysis": "",
+    "mnemonic": "检修结束前验证业务正常",
+    "explanation": "主机设备或存储设备检修工作结束前，应验证设备及所承载的业务运行正常。\"结束前\"验证确保检修后系统可正常投运。"
+  },
+  {
+    "id": 74,
+    "type": "单选题",
+    "stem": "根据信息安规规定，网络设备或安全设备检修前，应备份（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "配置文件"
+      },
+      {
+        "label": "B",
+        "text": "业务数据"
+      },
+      {
+        "label": "C",
+        "text": "运行参数"
+      },
+      {
+        "label": "D",
+        "text": "日志文件"
+      }
+    ],
+    "answer": "A",
+    "basis": "信息安规6.3.2",
+    "analysis": "",
+    "mnemonic": "选A：配置文件（6.3.2）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为A（配置文件）。B. 业务数据不正确；C. 运行参数不正确；D. 日志文件不正确。依据信息安规6.3.2。"
+  },
+  {
+    "id": 75,
+    "type": "单选题",
+    "stem": "根据信息安规规定，下列哪项是信息系统上线前应该做的工作？",
+    "options": [
+      {
+        "label": "A",
+        "text": "删除临时账号"
+      },
+      {
+        "label": "B",
+        "text": "删除临时数据"
+      },
+      {
+        "label": "C",
+        "text": "修改系统账号默认口令"
+      },
+      {
+        "label": "D",
+        "text": "以上均是"
+      }
+    ],
+    "answer": "D",
+    "basis": "信息安规4.3.6",
+    "analysis": "",
+    "mnemonic": "选D：以上均是（4.3.6）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为D（以上均是）。A. 删除临时账号不正确；B. 删除临时数据不正确；C. 修改系统账号默认口令不正确。依据信息安规4.3.6。"
+  },
+  {
+    "id": 76,
+    "type": "单选题",
+    "stem": "根据信息安规规定，下列说法不正确的是（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "网络设备或安全设备检修前，应备份配置文件"
+      },
+      {
+        "label": "B",
+        "text": "主机设备或存储设备检修前，应根据需要备份运行参数和业务数据"
+      },
+      {
+        "label": "C",
+        "text": "数据库检修前，应备份可能受影响的业务数据、配置文件、日志文件等"
+      },
+      {
+        "label": "D",
+        "text": "中间件检修前，应备份配置文件"
+      }
+    ],
+    "answer": "B",
+    "basis": "信息安规6.3",
+    "analysis": "",
+    "mnemonic": "选B：主机设备或存（6.3）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为B（主机设备或存储设备检修前，应根据需要备份运行参数和业务数据）。A. 网络设备或安全设备检修前，应备份配置文件不正确；C. 数据库检修前，应备份可能受影响的业务数据、配置文件、日志文件等不正确；D. 中间件检修前，应备份配置文件不正确。依据信息安规6.3。"
+  },
+  {
+    "id": 77,
+    "type": "单选题",
+    "stem": "根据信息安规规定，卸载或禁用计算机防病毒、桌面管理等安全防护软件，拆卸、更换终端设备硬件应经（ ）批准。",
+    "options": [
+      {
+        "label": "A",
+        "text": "上级单位"
+      },
+      {
+        "label": "B",
+        "text": "分管领导"
+      },
+      {
+        "label": "C",
+        "text": "信息通信调度部门"
+      },
+      {
+        "label": "D",
+        "text": "信息运维单位（部门）"
+      }
+    ],
+    "answer": "D",
+    "basis": "信息安规14.6",
+    "analysis": "",
+    "mnemonic": "选D：信息运维单位（14.6）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为D（信息运维单位（部门））。A. 上级单位不正确；B. 分管领导不正确；C. 信息通信调度部门不正确。依据信息安规14.6。"
+  },
+  {
+    "id": 78,
+    "type": "单选题",
+    "stem": "根据信息安规规定，新参加工作的人员、实习人员和临时参加工作的人员（管理人员、非全日制用工等）应经过（ ）后，方可参加指定的工作，且不应单独工作。",
+    "options": [
+      {
+        "label": "A",
+        "text": "信息安全知识教育"
+      },
+      {
+        "label": "B",
+        "text": "信息岗位技能培训"
+      },
+      {
+        "label": "C",
+        "text": "安全工作规程培训"
+      },
+      {
+        "label": "D",
+        "text": "电气知识培训"
+      }
+    ],
+    "answer": "A",
+    "basis": "信息安规4.1.5",
+    "analysis": "",
+    "mnemonic": "选A：信息安全知识（4.1.5）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为A（信息安全知识教育）。B. 信息岗位技能培训不正确；C. 安全工作规程培训不正确；D. 电气知识培训不正确。依据信息安规4.1.5。"
+  },
+  {
+    "id": 79,
+    "type": "单选题",
+    "stem": "根据信息安规规定，信息工作票由（   ）收执。",
+    "options": [
+      {
+        "label": "A",
+        "text": "工作票签发人、工作许可人"
+      },
+      {
+        "label": "B",
+        "text": "工作票签发人、工作负责人"
+      },
+      {
+        "label": "C",
+        "text": "工作负责人、工作许可人"
+      },
+      {
+        "label": "D",
+        "text": "业务负责人、工作许可人"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规5.2.4 e）",
+    "analysis": "",
+    "mnemonic": "选C：工作负责人、（5.2.4 e））",
+    "explanation": "本题考查信息安规相关知识点。正确答案为C（工作负责人、工作许可人）。A. 工作票签发人、工作许可人不正确；B. 工作票签发人、工作负责人不正确；D. 业务负责人、工作许可人不正确。依据信息安规5.2.4 e）。"
+  },
+  {
+    "id": 80,
+    "type": "单选题",
+    "stem": "根据信息安规规定，信息设备（ ）或下线，应擦除或销毁其中数据。",
+    "options": [
+      {
+        "label": "A",
+        "text": "搬迁"
+      },
+      {
+        "label": "B",
+        "text": "上线"
+      },
+      {
+        "label": "C",
+        "text": "变更用途"
+      },
+      {
+        "label": "D",
+        "text": "检修"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规4.3.10",
+    "analysis": "",
+    "mnemonic": "选C：变更用途（4.3.10）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为C（变更用途）。A. 搬迁不正确；B. 上线不正确；D. 检修不正确。依据信息安规4.3.10。"
+  },
+  {
+    "id": 81,
+    "type": "单选题",
+    "stem": "根据信息安规规定，信息网络（ ）指信息专业边界路由器等信息网络接入数据通信骨干网的互联设备。",
+    "options": [
+      {
+        "label": "A",
+        "text": "接入网络设备"
+      },
+      {
+        "label": "B",
+        "text": "汇聚网络设备"
+      },
+      {
+        "label": "C",
+        "text": "边缘网络设备"
+      },
+      {
+        "label": "D",
+        "text": "上联网络设备"
+      }
+    ],
+    "answer": "D",
+    "basis": "信息安规目次 6.条文说明   本文件5.2.2",
+    "analysis": "",
+    "mnemonic": "选D：上联网络设备（目次 6.条文说明   本文件5.2.2）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为D（上联网络设备）。A. 接入网络设备不正确；B. 汇聚网络设备不正确；C. 边缘网络设备不正确。依据信息安规目次 6.条文说明   本文件5.2.2。"
+  },
+  {
+    "id": 82,
+    "type": "单选题",
+    "stem": "根据信息安规规定，信息网络的（   ）、核心层及上联网络设备的投运退运、硬件变更、版本升级、配置变更、安全加固、缺陷故障修复等检修工作需要填用信息工作票。",
+    "options": [
+      {
+        "label": "A",
+        "text": "安全设备"
+      },
+      {
+        "label": "B",
+        "text": "汇聚层"
+      },
+      {
+        "label": "C",
+        "text": "接入层"
+      },
+      {
+        "label": "D",
+        "text": "本地网络设备"
+      }
+    ],
+    "answer": "B",
+    "basis": "信息安规5.2.2",
+    "analysis": "",
+    "mnemonic": "选B：汇聚层（5.2.2）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为B（汇聚层）。A. 安全设备不正确；C. 接入层不正确；D. 本地网络设备不正确。依据信息安规5.2.2。"
+  },
+  {
+    "id": 83,
+    "type": "单选题",
+    "stem": "根据信息安规规定，信息系统的（ ）等应定期备份，备份的数据宜定期进行验证。",
+    "options": [
+      {
+        "label": "A",
+        "text": "配置、业务数据"
+      },
+      {
+        "label": "B",
+        "text": "配置、程序代码"
+      },
+      {
+        "label": "C",
+        "text": "日志、程序代码"
+      },
+      {
+        "label": "D",
+        "text": "日志、业务数据"
+      }
+    ],
+    "answer": "A",
+    "basis": "信息安规7.4",
+    "analysis": "",
+    "mnemonic": "选A：配置、业务数（7.4）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为A（配置、业务数据）。B. 配置、程序代码不正确；C. 日志、程序代码不正确；D. 日志、业务数据不正确。依据信息安规7.4。"
+  },
+  {
+    "id": 84,
+    "type": "单选题",
+    "stem": "根据信息安规规定，信息系统的过期账号及其权限应及时（ ）或（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "注销、调整、备份"
+      },
+      {
+        "label": "B",
+        "text": "备份、调整、注销"
+      },
+      {
+        "label": "C",
+        "text": "注销、冻结、调整"
+      },
+      {
+        "label": "D",
+        "text": "备案、冻结、注销"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规4.3.4",
+    "analysis": "",
+    "mnemonic": "选C：注销、冻结、（4.3.4）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为C（注销、冻结、调整）。A. 注销、调整、备份不正确；B. 备份、调整、注销不正确；D. 备案、冻结、注销不正确。依据信息安规4.3.4。"
+  },
+  {
+    "id": 85,
+    "type": "单选题",
+    "stem": "根据信息安规规定，信息系统的配置、业务数据等应定期备份，备份的数据宜定期进行（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "修改"
+      },
+      {
+        "label": "B",
+        "text": "调整"
+      },
+      {
+        "label": "C",
+        "text": "验证"
+      },
+      {
+        "label": "D",
+        "text": "更新"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规7.4",
+    "analysis": "",
+    "mnemonic": "选C：验证（7.4）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为C（验证）。A. 修改不正确；B. 调整不正确；D. 更新不正确。依据信息安规7.4。"
+  },
+  {
+    "id": 86,
+    "type": "单选题",
+    "stem": "根据信息安规规定，信息系统的账号、权限应（ ）、权责匹配、最小化授权。",
+    "options": [
+      {
+        "label": "A",
+        "text": "最小化分配"
+      },
+      {
+        "label": "B",
+        "text": "定期分配"
+      },
+      {
+        "label": "C",
+        "text": "按需分配"
+      },
+      {
+        "label": "D",
+        "text": "由系统管理员统一分配"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规7.5",
+    "analysis": "",
+    "mnemonic": "选C：按需分配（7.5）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为C（按需分配）。A. 最小化分配不正确；B. 定期分配不正确；D. 由系统管理员统一分配不正确。依据信息安规7.5。"
+  },
+  {
+    "id": 87,
+    "type": "单选题",
+    "stem": "根据信息安规规定，信息系统检修工作完成后应收回（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "临时账号"
+      },
+      {
+        "label": "B",
+        "text": "系统账号"
+      },
+      {
+        "label": "C",
+        "text": "临时授权"
+      },
+      {
+        "label": "D",
+        "text": "临时密钥"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规4.3.5",
+    "analysis": "",
+    "mnemonic": "选C：临时授权（4.3.5）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为C（临时授权）。A. 临时账号不正确；B. 系统账号不正确；D. 临时密钥不正确。依据信息安规4.3.5。"
+  },
+  {
+    "id": 88,
+    "type": "单选题",
+    "stem": "根据信息安规规定，信息系统上线前，应删除（ ），并修改系统账号默认口令。",
+    "options": [
+      {
+        "label": "A",
+        "text": "系统账号、临时账号"
+      },
+      {
+        "label": "B",
+        "text": "临时账号、临时数据"
+      },
+      {
+        "label": "C",
+        "text": "系统账号、临时数据"
+      },
+      {
+        "label": "D",
+        "text": "临时账号、日志记录"
+      }
+    ],
+    "answer": "B",
+    "basis": "信息安规4.3.6",
+    "analysis": "",
+    "mnemonic": "选B：临时账号、临（4.3.6）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为B（临时账号、临时数据）。A. 系统账号、临时账号不正确；C. 系统账号、临时数据不正确；D. 临时账号、日志记录不正确。依据信息安规4.3.6。"
+  },
+  {
+    "id": 89,
+    "type": "单选题",
+    "stem": "根据信息安规规定，信息系统远程检修应使用（ ），并使用加密或专用的传输协议。且宜通过具备运维审计功能的设备开展。",
+    "options": [
+      {
+        "label": "A",
+        "text": "录屏软件"
+      },
+      {
+        "label": "B",
+        "text": "审计系统"
+      },
+      {
+        "label": "C",
+        "text": "运维专机"
+      },
+      {
+        "label": "D",
+        "text": "监控系统"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规4.3.3",
+    "analysis": "",
+    "mnemonic": "选C：运维专机（4.3.3）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为C（运维专机）。A. 录屏软件不正确；B. 审计系统不正确；D. 监控系统不正确。依据信息安规4.3.3。"
+  },
+  {
+    "id": 90,
+    "type": "单选题",
+    "stem": "根据信息安规规定，信息作业现场的（ ）等应符合 Q/GDW 10343 等标准的要求。",
+    "options": [
+      {
+        "label": "A",
+        "text": "生产条件和安全设施"
+      },
+      {
+        "label": "B",
+        "text": "办公条件和生产设施"
+      },
+      {
+        "label": "C",
+        "text": "生产条件和生产设施"
+      },
+      {
+        "label": "D",
+        "text": "办公条件和安全设施"
+      }
+    ],
+    "answer": "A",
+    "basis": "信息安规4.2.1",
+    "analysis": "",
+    "mnemonic": "选A：生产条件和安（4.2.1）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为A（生产条件和安全设施）。B. 办公条件和生产设施不正确；C. 生产条件和生产设施不正确；D. 办公条件和安全设施不正确。依据信息安规4.2.1。"
+  },
+  {
+    "id": 91,
+    "type": "单选题",
+    "stem": "根据信息安规规定，需要变更工作班成员时，应经工作负责人同意并记录在工作票（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "备注栏中"
+      },
+      {
+        "label": "B",
+        "text": "原工作班成员后面"
+      },
+      {
+        "label": "C",
+        "text": "工作班成员签名处"
+      },
+      {
+        "label": "D",
+        "text": "以上都不对"
+      }
+    ],
+    "answer": "A",
+    "basis": "信息安规5.2.5 b)",
+    "analysis": "",
+    "mnemonic": "变成员找负责，备注栏里要记录。【签发审票批·许可现场启·负责人带队监护】签发人不到现场审票批准；许可人落实安措许可开工；负责人现场带队管人。三者不得兼任！",
+    "explanation": "变更工作班成员由工作负责人同意并记录在备注栏。口诀：负责人现场管队伍——人事调整由现场带队人决定。"
+  },
+  {
+    "id": 92,
+    "type": "单选题",
+    "stem": "根据信息安规规定，蓄电池组接入电源前，应确认蓄电池组正负极性与（ ）直流输出正负极性对应，蓄电池组电压与（ ）输出电压匹配。",
+    "options": [
+      {
+        "label": "A",
+        "text": "UPS主机"
+      },
+      {
+        "label": "B",
+        "text": "整流器"
+      },
+      {
+        "label": "C",
+        "text": "逆变器"
+      },
+      {
+        "label": "D",
+        "text": "检修旁路"
+      }
+    ],
+    "answer": "B",
+    "basis": "信息安规13.3.3",
+    "analysis": "",
+    "mnemonic": "选B：整流器（13.3.3）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为B（整流器）。A. UPS主机不正确；C. 逆变器不正确；D. 检修旁路不正确。依据信息安规13.3.3。"
+  },
+  {
+    "id": 93,
+    "type": "单选题",
+    "stem": "根据信息安规规定，巡视时不得（ ）信息系统和机房动力环境告警信息。",
+    "options": [
+      {
+        "label": "A",
+        "text": "查看"
+      },
+      {
+        "label": "B",
+        "text": "记录"
+      },
+      {
+        "label": "C",
+        "text": "更改、清除"
+      },
+      {
+        "label": "D",
+        "text": "确认"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规7.1 c）",
+    "analysis": "",
+    "mnemonic": "选C：更改、清除（7.1 c））",
+    "explanation": "本题考查信息安规相关知识点。正确答案为C（更改、清除）。A. 查看不正确；B. 记录不正确；D. 确认不正确。依据信息安规7.1 c）。"
+  },
+  {
+    "id": 94,
+    "type": "单选题",
+    "stem": "根据信息安规规定，巡视时发现异常问题，应及时报告（ ）；非紧急情况的处理，应获得（ ）批准。",
+    "options": [
+      {
+        "label": "A",
+        "text": "信息运维单位（部门）、业务主管部门（业务归口管理部门）"
+      },
+      {
+        "label": "B",
+        "text": "业务主管部门（业务归口管理部门）、业务主管部门（业务归口管理部门）"
+      },
+      {
+        "label": "C",
+        "text": "信息运维单位（部门）、信息运维单位（部门）"
+      },
+      {
+        "label": "D",
+        "text": "业务主管部门（业务归口管理部门）、信息运维单位（部门）"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规7.1 b）",
+    "analysis": "",
+    "mnemonic": "选C：信息运维单位（7.1 b））",
+    "explanation": "本题考查信息安规相关知识点。正确答案为C（信息运维单位（部门）、信息运维单位（部门））。A. 信息运维单位（部门）、业务主管部门（业务归口管理部门）不正确；B. 业务主管部门（业务归口管理部门）、业务主管部门（业务归口管理部门）不正确；D. 业务主管部门（业务归口管理部门）、信息运维单位（部门）不正确。依据信息安规7.1 b）。"
+  },
+  {
+    "id": 95,
+    "type": "单选题",
+    "stem": "根据信息安规规定，业务数据的导入导出应经过（ ）批准，导出后的数据应妥善保管。",
+    "options": [
+      {
+        "label": "A",
+        "text": "信息运维部门"
+      },
+      {
+        "label": "B",
+        "text": "信息职能管理部门"
+      },
+      {
+        "label": "C",
+        "text": "业务主管部门（业务归口管理部门）"
+      },
+      {
+        "label": "D",
+        "text": "信息通信调度部门"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规4.3.7",
+    "analysis": "",
+    "mnemonic": "选C：业务主管部门（4.3.7）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为C（业务主管部门（业务归口管理部门））。A. 信息运维部门不正确；B. 信息职能管理部门不正确；D. 信息通信调度部门不正确。依据信息安规4.3.7。"
+  },
+  {
+    "id": 96,
+    "type": "单选题",
+    "stem": "根据信息安规规定，业务数据的导入导出应经过业务主管部门（业务归口管理部门）批准，导出后的数据应（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "及时销毁"
+      },
+      {
+        "label": "B",
+        "text": "妥善保管"
+      },
+      {
+        "label": "C",
+        "text": "备份保存"
+      },
+      {
+        "label": "D",
+        "text": "直接删除"
+      }
+    ],
+    "answer": "B",
+    "basis": "信息安规4.3.7",
+    "analysis": "",
+    "mnemonic": "选B：妥善保管（4.3.7）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为B（妥善保管）。A. 及时销毁不正确；C. 备份保存不正确；D. 直接删除不正确。依据信息安规4.3.7。"
+  },
+  {
+    "id": 97,
+    "type": "单选题",
+    "stem": "根据信息安规规定，业务系统版本升级后，应验证业务系统运行正常，并清除（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "临时数据"
+      },
+      {
+        "label": "B",
+        "text": "临时账号"
+      },
+      {
+        "label": "C",
+        "text": "旧版本的文件"
+      },
+      {
+        "label": "D",
+        "text": "日志文件"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规12.1",
+    "analysis": "",
+    "mnemonic": "选C：旧版本的文件（12.1）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为C（旧版本的文件）。A. 临时数据不正确；B. 临时账号不正确；D. 日志文件不正确。依据信息安规12.1。"
+  },
+  {
+    "id": 98,
+    "type": "单选题",
+    "stem": "根据信息安规规定，业务系统上线前，应在（ ）的测试机构进行安全测试，并取得检测合格报告，应删除临时账号、临时数据，并修改系统账号默认口令。",
+    "options": [
+      {
+        "label": "A",
+        "text": "具有资质"
+      },
+      {
+        "label": "B",
+        "text": "国内"
+      },
+      {
+        "label": "C",
+        "text": "行业内"
+      },
+      {
+        "label": "D",
+        "text": "国家电网公司内"
+      }
+    ],
+    "answer": "A",
+    "basis": "信息安规4.3.6",
+    "analysis": "",
+    "mnemonic": "选A：具有资质（4.3.6）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为A（具有资质）。B. 国内不正确；C. 行业内不正确；D. 国家电网公司内不正确。依据信息安规4.3.6。"
+  },
+  {
+    "id": 99,
+    "type": "单选题",
+    "stem": "根据信息安规规定，业务系统上线前，应在具有资质的测试机构进行安全测试，并取得检测合格报告，应删除临时账号、临时数据，并修改\n（     ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "系统默认配置参数"
+      },
+      {
+        "label": "B",
+        "text": "硬件设备参数"
+      },
+      {
+        "label": "C",
+        "text": "网络拓部结构"
+      },
+      {
+        "label": "D",
+        "text": "系统账号默认口令"
+      }
+    ],
+    "answer": "D",
+    "basis": "信息安规4.3.6",
+    "analysis": "",
+    "mnemonic": "选D：系统账号默认（4.3.6）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为D（系统账号默认口令）。A. 系统默认配置参数不正确；B. 硬件设备参数不正确；C. 网络拓部结构不正确。依据信息安规4.3.6。"
+  },
+  {
+    "id": 100,
+    "type": "单选题",
+    "stem": "根据信息安规规定，业务系统下线后，所有业务数据应（ ）或销毁。",
+    "options": [
+      {
+        "label": "A",
+        "text": "导出"
+      },
+      {
+        "label": "B",
+        "text": "备份"
+      },
+      {
+        "label": "C",
+        "text": "归档"
+      },
+      {
+        "label": "D",
+        "text": "妥善保存"
+      }
+    ],
+    "answer": "D",
+    "basis": "信息安规12.2",
+    "analysis": "",
+    "mnemonic": "选D：妥善保存（12.2）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为D（妥善保存）。A. 导出不正确；B. 备份不正确；C. 归档不正确。依据信息安规12.2。"
+  },
+  {
+    "id": 101,
+    "type": "单选题",
+    "stem": "根据信息安规规定，一张信息工作票中，（ ）与（ ）不得互相兼任。",
+    "options": [
+      {
+        "label": "A",
+        "text": "工作负责人、工作许可人"
+      },
+      {
+        "label": "B",
+        "text": "工作票签发人、工作许可人"
+      },
+      {
+        "label": "C",
+        "text": "工作票签发人、工作负责人"
+      },
+      {
+        "label": "D",
+        "text": "以上都不对"
+      }
+    ],
+    "answer": "A",
+    "basis": "信息安规5.2.4 f)",
+    "analysis": "",
+    "mnemonic": "三者不得兼任！签发·许可·负责人互不兼任。【签发审票批·许可现场启·负责人带队监护】签发人不到现场审票批准；许可人落实安措许可开工；负责人现场带队管人。三者不得兼任！",
+    "explanation": "一张工作票中，工作负责人与工作许可人不得互相兼任。三者职责相互制约：签发人审票批准、许可人落实安措许可、负责人带队监护，必须分离以确保安全。"
+  },
+  {
+    "id": 102,
+    "type": "单选题",
+    "stem": "根据信息安规规定，已执行的信息工作票至少应保存（   ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "三个月"
+      },
+      {
+        "label": "B",
+        "text": "半年"
+      },
+      {
+        "label": "C",
+        "text": "一年"
+      },
+      {
+        "label": "D",
+        "text": "两年"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规5.2.5 f)",
+    "analysis": "",
+    "mnemonic": "选C：一年（5.2.5 f)）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为C（一年）。A. 三个月不正确；B. 半年不正确；D. 两年不正确。依据信息安规5.2.5 f)。"
+  },
+  {
+    "id": 103,
+    "type": "单选题",
+    "stem": "根据信息安规规定，影响其他设备正常运行的故障设备应及时（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "停运"
+      },
+      {
+        "label": "B",
+        "text": "脱网（隔离）"
+      },
+      {
+        "label": "C",
+        "text": "检修"
+      },
+      {
+        "label": "D",
+        "text": "更换"
+      }
+    ],
+    "answer": "B",
+    "basis": "信息安规4.3.9",
+    "analysis": "",
+    "mnemonic": "选B：脱网（隔离）（4.3.9）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为B（脱网（隔离））。A. 停运不正确；C. 检修不正确；D. 更换不正确。依据信息安规4.3.9。"
+  },
+  {
+    "id": 104,
+    "type": "单选题",
+    "stem": "根据信息安规规定，在发现危及信息系统和（ ）的紧急情况时，有权停止作业或在采取可能的紧急措施后撤离作业场所，并立即报告。",
+    "options": [
+      {
+        "label": "A",
+        "text": "网络安全"
+      },
+      {
+        "label": "B",
+        "text": "主机安全"
+      },
+      {
+        "label": "C",
+        "text": "数据安全"
+      },
+      {
+        "label": "D",
+        "text": "操作安全"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规4.4.4",
+    "analysis": "",
+    "mnemonic": "选C：数据安全（4.4.4）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为C（数据安全）。A. 网络安全不正确；B. 主机安全不正确；D. 操作安全不正确。依据信息安规4.4.4。"
+  },
+  {
+    "id": 105,
+    "type": "单选题",
+    "stem": "根据信息安规规定，在工作票制度中，工作票由（ ）或（    ）分别收执。",
+    "options": [
+      {
+        "label": "A",
+        "text": "工作负责人、工作班成员"
+      },
+      {
+        "label": "B",
+        "text": "工作负责人、工作许可人"
+      },
+      {
+        "label": "C",
+        "text": "工作票签发人、工作许可人"
+      },
+      {
+        "label": "D",
+        "text": "工作负责人、工作票签发人"
+      }
+    ],
+    "answer": "B",
+    "basis": "信息安规5.2.4 e）",
+    "analysis": "",
+    "mnemonic": "选B：工作负责人、（5.2.4 e））",
+    "explanation": "本题考查信息安规相关知识点。正确答案为B（工作负责人、工作许可人）。A. 工作负责人、工作班成员不正确；C. 工作票签发人、工作许可人不正确；D. 工作负责人、工作票签发人不正确。依据信息安规5.2.4 e）。"
+  },
+  {
+    "id": 106,
+    "type": "单选题",
+    "stem": "根据信息安规规定，在工作票制度中，工作票由（ ）或（ ）填写。",
+    "options": [
+      {
+        "label": "A",
+        "text": "工作负责人、工作班成员"
+      },
+      {
+        "label": "B",
+        "text": "工作负责人、工作许可人"
+      },
+      {
+        "label": "C",
+        "text": "工作票签发人、工作许可人"
+      },
+      {
+        "label": "D",
+        "text": "工作负责人、工作票签发人"
+      }
+    ],
+    "answer": "D",
+    "basis": "信息安规5.2.4 a）",
+    "analysis": "",
+    "mnemonic": "工作票由工作负责人填写。【签发审票批·许可现场启·负责人带队监护】签发人不到现场审票批准；许可人落实安措许可开工；负责人现场带队管人。三者不得兼任！",
+    "explanation": "工作票由工作负责人填写（或工作票签发人填写）。负责人最了解现场工作内容，由其填写确保票面信息准确。口诀：负责人现场管队伍——最懂现场的人填票。"
+  },
+  {
+    "id": 107,
+    "type": "单选题",
+    "stem": "根据信息安规规定，在管理信息区终端设备上启用（ ）通信功能应经信息运维单位（部门）批准。",
+    "options": [
+      {
+        "label": "A",
+        "text": "互联网"
+      },
+      {
+        "label": "B",
+        "text": "点对点"
+      },
+      {
+        "label": "C",
+        "text": "无线"
+      },
+      {
+        "label": "D",
+        "text": "局域网"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规14.7",
+    "analysis": "",
+    "mnemonic": "选C：无线（14.7）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为C（无线）。A. 互联网不正确；B. 点对点不正确；D. 局域网不正确。依据信息安规14.7。"
+  },
+  {
+    "id": 108,
+    "type": "单选题",
+    "stem": "根据信息安规规定，在管理信息区终端设备上启用无线通信功能应经（ ）批准。",
+    "options": [
+      {
+        "label": "A",
+        "text": "上级单位"
+      },
+      {
+        "label": "B",
+        "text": "相关单位（部门）"
+      },
+      {
+        "label": "C",
+        "text": "相关运维单位（部门）"
+      },
+      {
+        "label": "D",
+        "text": "信息运维单位（部门）"
+      }
+    ],
+    "answer": "D",
+    "basis": "信息安规14.7",
+    "analysis": "",
+    "mnemonic": "选D：信息运维单位（14.7）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为D（信息运维单位（部门））。A. 上级单位不正确；B. 相关单位（部门）不正确；C. 相关运维单位（部门）不正确。依据信息安规14.7。"
+  },
+  {
+    "id": 109,
+    "type": "单选题",
+    "stem": "根据信息安规规定，在信息系统上工作，保证安全的组织措施有哪些（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "工作票制度、工作许可制度、工作终结制度"
+      },
+      {
+        "label": "B",
+        "text": "工作许可制度、工作监护制度、工作终结制度"
+      },
+      {
+        "label": "C",
+        "text": "工作票制度、工作监护制度、工作终结制度"
+      },
+      {
+        "label": "D",
+        "text": "工作票制度、工作许可制度、工作监护制度"
+      }
+    ],
+    "answer": "A",
+    "basis": "信息安规5.1",
+    "analysis": "",
+    "mnemonic": "组织措施：票+许可+监护+终结（无操作票）",
+    "explanation": "保证安全的组织措施包括：工作票制度、工作许可制度、工作监护制度、工作终结制度。注意没有\"操作票制度\"，操作票属于电力安规范畴。"
+  },
+  {
+    "id": 110,
+    "type": "单选题",
+    "stem": "根据信息安规规定，在信息系统上工作，下列哪项不是保证安全的组织措施（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "操作票制度"
+      },
+      {
+        "label": "B",
+        "text": "工作票制度"
+      },
+      {
+        "label": "C",
+        "text": "工作许可制度"
+      },
+      {
+        "label": "D",
+        "text": "工作终结制度"
+      }
+    ],
+    "answer": "A",
+    "basis": "信息安规5.1",
+    "analysis": "",
+    "mnemonic": "组织措施：票+许可+监护+终结（无操作票）",
+    "explanation": "保证安全的组织措施包括：工作票制度、工作许可制度、工作监护制度、工作终结制度。注意没有\"操作票制度\"，操作票属于电力安规范畴。"
+  },
+  {
+    "id": 111,
+    "type": "单选题",
+    "stem": "根据信息安规规定，中间件检修工作结束前，应验证设备及所承载的（ ）运行正常。",
+    "options": [
+      {
+        "label": "A",
+        "text": "业务"
+      },
+      {
+        "label": "B",
+        "text": "硬件功耗"
+      },
+      {
+        "label": "C",
+        "text": "日志大小"
+      },
+      {
+        "label": "D",
+        "text": "出厂配置"
+      }
+    ],
+    "answer": "A",
+    "basis": "信息安规12.3",
+    "analysis": "",
+    "mnemonic": "检修结束前验证业务正常",
+    "explanation": "主机设备或存储设备检修工作结束前，应验证设备及所承载的业务运行正常。\"结束前\"验证确保检修后系统可正常投运。"
+  },
+  {
+    "id": 112,
+    "type": "单选题",
+    "stem": "根据信息安规规定，中间件检修前，应备份（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "配置文件"
+      },
+      {
+        "label": "B",
+        "text": "业务数据"
+      },
+      {
+        "label": "C",
+        "text": "运行参数"
+      },
+      {
+        "label": "D",
+        "text": "日志文件"
+      }
+    ],
+    "answer": "A",
+    "basis": "信息安规6.3.5",
+    "analysis": "",
+    "mnemonic": "中间件检修前备份配置文件",
+    "explanation": "中间件检修前应备份配置文件。中间件的核心是配置信息，检修可能影响配置，因此备份配置文件是首要任务。"
+  },
+  {
+    "id": 113,
+    "type": "单选题",
+    "stem": "根据信息安规规定，终端设备的通信卡启用互联网通信功能应经（      ）批准。",
+    "options": [
+      {
+        "label": "A",
+        "text": "上级单位"
+      },
+      {
+        "label": "B",
+        "text": "相关单位（部门）"
+      },
+      {
+        "label": "C",
+        "text": "相关运维单位（部门）"
+      },
+      {
+        "label": "D",
+        "text": "信息运维单位（部门）"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规14.8",
+    "analysis": "",
+    "mnemonic": "通信卡上网：相关运维单位批",
+    "explanation": "终端设备的通信卡启用互联网通信功能，应经相关运维单位（部门）批准。这是为了防止未经审批的互联网接入带来安全风险。"
+  },
+  {
+    "id": 114,
+    "type": "单选题",
+    "stem": "根据信息安规规定，终端设备及外围设备交由（ ）维修处理及修复后重新入网应经信息运维单位（部门）批准。",
+    "options": [
+      {
+        "label": "A",
+        "text": "设备主人所在单位（部门）"
+      },
+      {
+        "label": "B",
+        "text": "信息化归口管理部门"
+      },
+      {
+        "label": "C",
+        "text": "外部单位"
+      },
+      {
+        "label": "D",
+        "text": "桌面维修单位（部门）"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规12.7",
+    "analysis": "",
+    "mnemonic": "选C：外部单位（12.7）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为C（外部单位）。A. 设备主人所在单位（部门）不正确；B. 信息化归口管理部门不正确；D. 桌面维修单位（部门）不正确。依据信息安规12.7。"
+  },
+  {
+    "id": 115,
+    "type": "单选题",
+    "stem": "根据信息安规规定，终端设备及外围设备交由外部单位维修处理及修复后重新入网应经（ ）批准。",
+    "options": [
+      {
+        "label": "A",
+        "text": "上级单位"
+      },
+      {
+        "label": "B",
+        "text": "相关单位（部门）"
+      },
+      {
+        "label": "C",
+        "text": "相关运维单位（部门）"
+      },
+      {
+        "label": "D",
+        "text": "信息运维单位（部门）"
+      }
+    ],
+    "answer": "D",
+    "basis": "信息安规14.9",
+    "analysis": "",
+    "mnemonic": "外修重入网：信息运维单位批",
+    "explanation": "终端设备及外围设备交由外部单位维修后重新入网，应经信息运维单位（部门）批准。因为外部维修可能改变设备安全状态，需信息运维单位把关。"
+  },
+  {
+    "id": 116,
+    "type": "单选题",
+    "stem": "根据信息安规规定，终端设备在管理信息区、互联网区入网应经由（ ）批准。",
+    "options": [
+      {
+        "label": "A",
+        "text": "信息通信调度部门"
+      },
+      {
+        "label": "B",
+        "text": "信息运维单位（部门）"
+      },
+      {
+        "label": "C",
+        "text": "分管领导"
+      },
+      {
+        "label": "D",
+        "text": "业务主管部门（业务归口管理部门）"
+      }
+    ],
+    "answer": "B",
+    "basis": "信息安规14.5",
+    "analysis": "",
+    "mnemonic": "管理区/互联网区入网：信息运维单位批",
+    "explanation": "终端设备在管理信息区、互联网区入网，应经信息运维单位（部门）批准。信息运维单位负责网络安全准入管理。"
+  },
+  {
+    "id": 117,
+    "type": "单选题",
+    "stem": "根据信息安规规定，主机设备或存储设备（ ），应验证设备及所承载的业务运行正常。",
+    "options": [
+      {
+        "label": "A",
+        "text": "检修工作结束前"
+      },
+      {
+        "label": "B",
+        "text": "检修工作结束后"
+      },
+      {
+        "label": "C",
+        "text": "检修工作中"
+      },
+      {
+        "label": "D",
+        "text": "检修工作开始后"
+      }
+    ],
+    "answer": "A",
+    "basis": "信息安规9.3",
+    "analysis": "",
+    "mnemonic": "选A：检修工作结束（9.3）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为A（检修工作结束前）。B. 检修工作结束后不正确；C. 检修工作中不正确；D. 检修工作开始后不正确。依据信息安规9.3。"
+  },
+  {
+    "id": 118,
+    "type": "单选题",
+    "stem": "根据信息安规规定，主机设备或存储设备检修前，应根据需要备份（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "配置文件"
+      },
+      {
+        "label": "B",
+        "text": "业务数据"
+      },
+      {
+        "label": "C",
+        "text": "运行参数"
+      },
+      {
+        "label": "D",
+        "text": "日志文件"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规6.3.3",
+    "analysis": "",
+    "mnemonic": "主机存储检修前：按需备份运行参数",
+    "explanation": "主机设备或存储设备检修前，应根据需要备份运行参数。配置文件、业务数据、日志文件分别属于数据库和中间件的备份范畴，主机存储检修前重点是运行参数。"
+  },
+  {
+    "id": 119,
+    "type": "单选题",
+    "stem": "工作负责人变更情况应记录在工作票备注栏中。原工作负责人、现工作负责人应对（   ）和（ ）进行交接。",
+    "options": [
+      {
+        "label": "A",
+        "text": "工作任务检修方案"
+      },
+      {
+        "label": "B",
+        "text": "检修方案应急预案"
+      },
+      {
+        "label": "C",
+        "text": "三措一案任务管控卡"
+      },
+      {
+        "label": "D",
+        "text": "工作任务安全措施"
+      }
+    ],
+    "answer": "D",
+    "basis": "信息安规5.2.5 b)",
+    "analysis": "",
+    "mnemonic": "负责人交接：任务+安全措施。【签发审票批·许可现场启·负责人带队监护】签发人不到现场审票批准；许可人落实安措许可开工；负责人现场带队管人。三者不得兼任！",
+    "explanation": "工作负责人变更时，原负责人和现负责人应对工作任务和安全措施进行交接，确保新负责人清楚工作内容和安全要求，现场管理不断档。"
+  },
+  {
+    "id": 120,
+    "type": "单选题",
+    "stem": "管理信息区由承载国家电网公司（     ）生产、经营、管理和涉商密业务系统构成的安全区域。",
+    "options": [
+      {
+        "label": "A",
+        "text": "关键"
+      },
+      {
+        "label": "B",
+        "text": "基础"
+      },
+      {
+        "label": "C",
+        "text": "安全"
+      },
+      {
+        "label": "D",
+        "text": "核心"
+      }
+    ],
+    "answer": "D",
+    "basis": "信息安规3.4",
+    "analysis": "",
+    "mnemonic": "管理信息区=核心生产管理业务",
+    "explanation": "管理信息区由承载国家电网公司核心生产、经营、管理和涉商密业务系统构成。不是\"关键\"\"基础\"或\"安全\"，核心业务系统才需要纳入管理信息区保护。"
+  },
+  {
+    "id": 121,
+    "type": "单选题",
+    "stem": "互联网区由承载（     ）业务系统（网站、邮件、电力交易、电子商务等）和互联网新兴业务（综合能源服务、车联网、光伏云网、移动办公、网上国网等）系统构成的安全区域。",
+    "options": [
+      {
+        "label": "A",
+        "text": "对外服务类"
+      },
+      {
+        "label": "B",
+        "text": "内部办公类"
+      },
+      {
+        "label": "C",
+        "text": "核心业务类"
+      },
+      {
+        "label": "D",
+        "text": "决策支撑类"
+      }
+    ],
+    "answer": "A",
+    "basis": "信息安规3.5",
+    "analysis": "",
+    "mnemonic": "选A：对外服务类（3.5）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为A（对外服务类）。B. 内部办公类不正确；C. 核心业务类不正确；D. 决策支撑类不正确。依据信息安规3.5。"
+  },
+  {
+    "id": 122,
+    "type": "单选题",
+    "stem": "任何人发现有违反《国家电网有限公司电力安全工作规程第9部分：信息部分》的情况，应（ ），经纠正后才能恢复作业。",
+    "options": [
+      {
+        "label": "A",
+        "text": "批评教育"
+      },
+      {
+        "label": "B",
+        "text": "严肃指出"
+      },
+      {
+        "label": "C",
+        "text": "立即汇报"
+      },
+      {
+        "label": "D",
+        "text": "立即制止"
+      }
+    ],
+    "answer": "D",
+    "basis": "信息安规4.4.4",
+    "analysis": "",
+    "mnemonic": "发现违章立即制止，纠正后再恢复",
+    "explanation": "任何人发现违反安规的情况，应立即制止，纠正后才能恢复作业。\"批评教育\"\"严肃指出\"\"立即汇报\"都不够——必须先制止违规行为本身。"
+  },
+  {
+    "id": 123,
+    "type": "单选题",
+    "stem": "信息系统由计算机及相关配套设备、设施构成的，按照一定的应用目标和规则对信息进行采集、加工、存储、传输、检索处理的，为电力生产、经营、管理业务提供支持的（   ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "服务系统"
+      },
+      {
+        "label": "B",
+        "text": "研发系统"
+      },
+      {
+        "label": "C",
+        "text": "保障系统"
+      },
+      {
+        "label": "D",
+        "text": "管理系统"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规3.1",
+    "analysis": "",
+    "mnemonic": "信息系统=保障系统",
+    "explanation": "信息系统是按照一定应用目标对信息进行采集、加工、存储、传输、检索处理的保障系统，为电力生产、经营、管理提供支持。"
+  },
+  {
+    "id": 124,
+    "type": "单选题",
+    "stem": "信息系统运行指监控、巡视检查、安全漏洞扫描、异常事件应急处置、缺陷管理、资源及台账管理、权限及口令管理、运行统计分析和（ ）等工作。",
+    "options": [
+      {
+        "label": "A",
+        "text": "设备管理"
+      },
+      {
+        "label": "B",
+        "text": "网络安全"
+      },
+      {
+        "label": "C",
+        "text": "安全保障"
+      },
+      {
+        "label": "D",
+        "text": "数据安全"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规3.2",
+    "analysis": "",
+    "mnemonic": "选C：安全保障（3.2）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为C（安全保障）。A. 设备管理不正确；B. 网络安全不正确；D. 数据安全不正确。依据信息安规3.2。"
+  },
+  {
+    "id": 125,
+    "type": "单选题",
+    "stem": "业务系统采用（ ）支撑企业日常生产、管理、经营等业务的应用软件，包括业务应用系统、企业中台、信息集成平台、App 等",
+    "options": [
+      {
+        "label": "A",
+        "text": "网络技术"
+      },
+      {
+        "label": "B",
+        "text": "计算机技术"
+      },
+      {
+        "label": "C",
+        "text": "数据库技术"
+      },
+      {
+        "label": "D",
+        "text": "安全技术"
+      }
+    ],
+    "answer": "B",
+    "basis": "信息安规3.6",
+    "analysis": "",
+    "mnemonic": "选B：计算机技术（3.6）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为B（计算机技术）。A. 网络技术不正确；C. 数据库技术不正确；D. 安全技术不正确。依据信息安规3.6。"
+  },
+  {
+    "id": 126,
+    "type": "单选题",
+    "stem": "云平台资源、实例检修工作结束前，应验证（ ）运行正常。",
+    "options": [
+      {
+        "label": "A",
+        "text": "云平台相关实例、承载业务"
+      },
+      {
+        "label": "B",
+        "text": "硬件出厂参数"
+      },
+      {
+        "label": "C",
+        "text": "日志存储容量"
+      },
+      {
+        "label": "D",
+        "text": "镜像文件版本号"
+      }
+    ],
+    "answer": "A",
+    "basis": "信息安规11.2",
+    "analysis": "",
+    "mnemonic": "检修结束前验证业务正常",
+    "explanation": "主机设备或存储设备检修工作结束前，应验证设备及所承载的业务运行正常。\"结束前\"验证确保检修后系统可正常投运。"
+  },
+  {
+    "id": 127,
+    "type": "单选题",
+    "stem": "云平台组件版本升级检修工作开始前，应确认其与云控制管理平台的（     ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "一致性"
+      },
+      {
+        "label": "B",
+        "text": "吞吐量"
+      },
+      {
+        "label": "C",
+        "text": "兼容性"
+      },
+      {
+        "label": "D",
+        "text": "冗余度"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规11.1",
+    "analysis": "",
+    "mnemonic": "选C：兼容性（11.1）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为C（兼容性）。A. 一致性不正确；B. 吞吐量不正确；D. 冗余度不正确。依据信息安规11.1。"
+  },
+  {
+    "id": 128,
+    "type": "单选题",
+    "stem": "终端设备应禁用不必要的（ ），应定期升级系统、更新补丁、扫描病毒、修复漏洞。",
+    "options": [
+      {
+        "label": "A",
+        "text": "系统版本和应用商店"
+      },
+      {
+        "label": "B",
+        "text": "网络连接和蓝牙设备"
+      },
+      {
+        "label": "C",
+        "text": "安全软件和防火墙"
+      },
+      {
+        "label": "D",
+        "text": "功能组件和外设接口"
+      }
+    ],
+    "answer": "D",
+    "basis": "信息安规14.4",
+    "analysis": "",
+    "mnemonic": "选D：功能组件和外（14.4）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为D（功能组件和外设接口）。A. 系统版本和应用商店不正确；B. 网络连接和蓝牙设备不正确；C. 安全软件和防火墙不正确。依据信息安规14.4。"
+  },
+  {
+    "id": 129,
+    "type": "单选题",
+    "stem": "主机设备提供逻辑独立服务单位的实体或虚拟计算机，包括其附属的（ ）以及运行在该设备上的（     ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "存储业务系统"
+      },
+      {
+        "label": "B",
+        "text": "数据操作系统"
+      },
+      {
+        "label": "C",
+        "text": "存储操作系统"
+      },
+      {
+        "label": "D",
+        "text": "数据业务系统"
+      }
+    ],
+    "answer": "C",
+    "basis": "信息安规3.7",
+    "analysis": "",
+    "mnemonic": "选C：存储操作系统（3.7）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为C（存储操作系统）。A. 存储业务系统不正确；B. 数据操作系统不正确；D. 数据业务系统不正确。依据信息安规3.7。"
+  },
+  {
+    "id": 130,
+    "type": "单选题",
+    "stem": "作业人员应具备必要的信息专业知识，掌握信息专业工作技能，且按工作性质，熟悉《国家电网有限公司电力安全工作规程第9部分：信息部分》的相关部分，并经（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "专业培训"
+      },
+      {
+        "label": "B",
+        "text": "考试合格"
+      },
+      {
+        "label": "C",
+        "text": "技能培训"
+      },
+      {
+        "label": "D",
+        "text": "现场实习"
+      }
+    ],
+    "answer": "B",
+    "basis": "信息安规4.1.2",
+    "analysis": "",
+    "mnemonic": "选B：考试合格（4.1.2）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为B（考试合格）。A. 专业培训不正确；C. 技能培训不正确；D. 现场实习不正确。依据信息安规4.1.2。"
+  },
+  {
+    "id": 131,
+    "type": "多选题",
+    "stem": "《国家电网公司电力安全工作规程第9部分：信息部分》规定，工作负责人应由有本专业工作经验、（ ）的人员担任，名单应公布。",
+    "options": [
+      {
+        "label": "A",
+        "text": "熟悉工作范围内信息系统情况"
+      },
+      {
+        "label": "B",
+        "text": "熟悉本规程"
+      },
+      {
+        "label": "C",
+        "text": "熟悉工作班成员工作能力"
+      },
+      {
+        "label": "D",
+        "text": "经信息运维部门批准"
+      }
+    ],
+    "answer": "ABCD",
+    "basis": "5.2.7 b)",
+    "analysis": "",
+    "mnemonic": "选ABCD：熟悉工作范围、熟悉本规程、熟悉工作班成、经信息运维部（5.2.7 b)）\n（口诀：签发审票批·许可现场启·负责人带队监护·三者不兼任）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为ABCD（熟悉工作范围内信息系统情况、熟悉本规程、熟悉工作班成员工作能力、经信息运维部门批准）。依据5.2.7 b)。"
+  },
+  {
+    "id": 132,
+    "type": "多选题",
+    "stem": "《国家电网公司电力安全工作规程第9部分：信息部分》规定，工作票签发人应由（ ）的人员担任，名单应公布。",
+    "options": [
+      {
+        "label": "A",
+        "text": "熟悉作业人员技术水平"
+      },
+      {
+        "label": "B",
+        "text": "熟悉相关信息系统情况"
+      },
+      {
+        "label": "C",
+        "text": "熟悉本规程"
+      },
+      {
+        "label": "D",
+        "text": "具有相关工作经验的领导人、技术人员或经信息运维单位批准的人员"
+      }
+    ],
+    "answer": "ABCD",
+    "basis": "5.2.7 a)",
+    "analysis": "",
+    "mnemonic": "选ABCD：熟悉作业人员、熟悉相关信息、熟悉本规程、具有相关工作（5.2.7 a)）\n（口诀：签发审票批·许可现场启·负责人带队监护·三者不兼任）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为ABCD（熟悉作业人员技术水平、熟悉相关信息系统情况、熟悉本规程、具有相关工作经验的领导人、技术人员或经信息运维单位批准的人员）。依据5.2.7 a)。"
+  },
+  {
+    "id": 133,
+    "type": "多选题",
+    "stem": "《国家电网公司电力安全工作规程第9部分：信息部分》规定了从事信息相关工作的（ ）安全要求。",
+    "options": [
+      {
+        "label": "A",
+        "text": "安全组织措施"
+      },
+      {
+        "label": "B",
+        "text": "安全技术措施"
+      },
+      {
+        "label": "C",
+        "text": "信息系统"
+      },
+      {
+        "label": "D",
+        "text": "相关设备工作"
+      }
+    ],
+    "answer": "ABCD",
+    "basis": "1.0.0",
+    "analysis": "",
+    "mnemonic": "选ABCD：安全组织措施、安全技术措施、信息系统、相关设备工作（1.0.0）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为ABCD（安全组织措施、安全技术措施、信息系统、相关设备工作）。依据1.0.0。"
+  },
+  {
+    "id": 134,
+    "type": "多选题",
+    "stem": "《国家电网公司电力安全工作规程第9部分：信息部分》适用于国家电网有限公司（简称国家电网公司）系统各单位运行中的（ ），其他相关系统可参照执行。",
+    "options": [
+      {
+        "label": "A",
+        "text": "变电场所"
+      },
+      {
+        "label": "B",
+        "text": "配电场所"
+      },
+      {
+        "label": "C",
+        "text": "信息系统"
+      },
+      {
+        "label": "D",
+        "text": "相关场所"
+      }
+    ],
+    "answer": "CD",
+    "basis": "1.0.0",
+    "analysis": "",
+    "mnemonic": "选CD：信息系统、相关场所（1.0.0）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为CD（信息系统、相关场所）。变电场所、配电场所不属于正确选项。依据1.0.0。"
+  },
+  {
+    "id": 135,
+    "type": "多选题",
+    "stem": "《国家电网公司电力安全工作规程第9部分：信息部分》中的信息系统不包括（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "电力监控系统"
+      },
+      {
+        "label": "B",
+        "text": "营销信息系统"
+      },
+      {
+        "label": "C",
+        "text": "调控中心安全Ⅲ区中的信息系统"
+      },
+      {
+        "label": "D",
+        "text": "通信网管系统"
+      }
+    ],
+    "answer": "ACD",
+    "basis": "3.1.0",
+    "analysis": "",
+    "mnemonic": "选ACD：电力监控系统、调控中心安全、通信网管系统（3.1.0）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为ACD（电力监控系统、调控中心安全Ⅲ区中的信息系统、通信网管系统）。营销信息系统不属于正确选项。依据3.1.0。"
+  },
+  {
+    "id": 136,
+    "type": "多选题",
+    "stem": "《国家电网公司电力安全工作规程第9部分：信息部分》中指信息系统运行的工作包括（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "监控"
+      },
+      {
+        "label": "B",
+        "text": "安全漏洞扫描"
+      },
+      {
+        "label": "C",
+        "text": "异常事件应急处置"
+      },
+      {
+        "label": "D",
+        "text": "缺陷管理"
+      }
+    ],
+    "answer": "ABCD",
+    "basis": "3.2.0",
+    "analysis": "",
+    "mnemonic": "选ABCD：监控、安全漏洞扫描、异常事件应急、缺陷管理（3.2.0）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为ABCD（监控、安全漏洞扫描、异常事件应急处置、缺陷管理）。依据3.2.0。"
+  },
+  {
+    "id": 137,
+    "type": "多选题",
+    "stem": "参与公司信息工作的外来作业人员应熟悉《国家电网公司电力安全工作规程第9部分：信息部分》，经（ ），并经（ ）后，方可参加工作。",
+    "options": [
+      {
+        "label": "A",
+        "text": "技能培训"
+      },
+      {
+        "label": "B",
+        "text": "考试合格"
+      },
+      {
+        "label": "C",
+        "text": "现场实习"
+      },
+      {
+        "label": "D",
+        "text": "信息运维单位（部门）认可"
+      }
+    ],
+    "answer": "BD",
+    "basis": "4.1.4",
+    "analysis": "",
+    "mnemonic": "外来人员：考试合格+运维认可才能参加",
+    "explanation": "本题考查信息安规相关知识点。正确答案为BD（考试合格、信息运维单位（部门）认可）。技能培训、现场实习不属于正确选项。依据4.1.4。"
+  },
+  {
+    "id": 138,
+    "type": "多选题",
+    "stem": "根据信息安规规定，（ ）、（ ）之间的边界应采用国家电网公司认可的隔离装置进行安全隔离。",
+    "options": [
+      {
+        "label": "A",
+        "text": "管理信息区与互联网区之间"
+      },
+      {
+        "label": "B",
+        "text": "管理信息区与生产控制区"
+      },
+      {
+        "label": "C",
+        "text": "互联网大区与互联网"
+      },
+      {
+        "label": "D",
+        "text": "管理信息大区III区与IV区"
+      }
+    ],
+    "answer": "AB",
+    "basis": "4.3.1",
+    "analysis": "",
+    "mnemonic": "选AB：管理信息区与、管理信息区与（4.3.1）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为AB（管理信息区与互联网区之间、管理信息区与生产控制区）。互联网大区与互联网、管理信息大区III区与IV区不属于正确选项。依据4.3.1。"
+  },
+  {
+    "id": 139,
+    "type": "多选题",
+    "stem": "根据信息安规规定，（ ）的边界应采用国家电网公司认可的隔离装置进行安全隔离。",
+    "options": [
+      {
+        "label": "A",
+        "text": "管理信息区与互联网区之间"
+      },
+      {
+        "label": "B",
+        "text": "管理信息区与生产控制区之间"
+      },
+      {
+        "label": "C",
+        "text": "总部与各省电力公司网络之间"
+      },
+      {
+        "label": "D",
+        "text": "各省电力公司与地市供电公司网络之间"
+      }
+    ],
+    "answer": "AB",
+    "basis": "4.3.1",
+    "analysis": "",
+    "mnemonic": "选AB：管理信息区与、管理信息区与（4.3.1）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为AB（管理信息区与互联网区之间、管理信息区与生产控制区之间）。总部与各省电力公司网络之间、各省电力公司与地市供电公司网络之间不属于正确选项。依据4.3.1。"
+  },
+  {
+    "id": 140,
+    "type": "多选题",
+    "stem": "根据信息安规规定，（ ）未断开前，不得断开蓄电池之间的连接。",
+    "options": [
+      {
+        "label": "A",
+        "text": "直流开关"
+      },
+      {
+        "label": "B",
+        "text": "旁路检修开关"
+      },
+      {
+        "label": "C",
+        "text": "负载"
+      },
+      {
+        "label": "D",
+        "text": "熔断器"
+      }
+    ],
+    "answer": "AD",
+    "basis": "13.3.1",
+    "analysis": "",
+    "mnemonic": "选AD：直流开关、熔断器（13.3.1）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为AD（直流开关、熔断器）。旁路检修开关、负载不属于正确选项。依据13.3.1。"
+  },
+  {
+    "id": 141,
+    "type": "多选题",
+    "stem": "根据信息安规规定，办公计算机应安装（ ）等安全防护软件。",
+    "options": [
+      {
+        "label": "A",
+        "text": "防病毒"
+      },
+      {
+        "label": "B",
+        "text": "桌面管理"
+      },
+      {
+        "label": "C",
+        "text": "上网行为审计"
+      },
+      {
+        "label": "D",
+        "text": "防篡改"
+      }
+    ],
+    "answer": "AB",
+    "basis": "14.3.0",
+    "analysis": "",
+    "mnemonic": "选AB：防病毒、桌面管理（14.3.0）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为AB（防病毒、桌面管理）。上网行为审计、防篡改不属于正确选项。依据14.3.0。"
+  },
+  {
+    "id": 142,
+    "type": "多选题",
+    "stem": "根据信息安规规定，不应（ ）用户信息。",
+    "options": [
+      {
+        "label": "A",
+        "text": "泄露"
+      },
+      {
+        "label": "B",
+        "text": "篡改"
+      },
+      {
+        "label": "C",
+        "text": "恶意损毁"
+      },
+      {
+        "label": "D",
+        "text": "导入导出"
+      }
+    ],
+    "answer": "ABC",
+    "basis": "4.3.8",
+    "analysis": "",
+    "mnemonic": "选ABC：泄露、篡改、恶意损毁（4.3.8）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为ABC（泄露、篡改、恶意损毁）。导入导出不属于正确选项。依据4.3.8。"
+  },
+  {
+    "id": 143,
+    "type": "多选题",
+    "stem": "根据信息安规规定，更换（ ）的热插拔部件时，应做好防静电措施。",
+    "options": [
+      {
+        "label": "A",
+        "text": "主机设备"
+      },
+      {
+        "label": "B",
+        "text": "存储设备"
+      },
+      {
+        "label": "C",
+        "text": "网络设备"
+      },
+      {
+        "label": "D",
+        "text": "安全设备"
+      }
+    ],
+    "answer": "ABCD",
+    "basis": "8.1、9.1",
+    "analysis": "",
+    "mnemonic": "选ABCD：主机设备、存储设备、网络设备、安全设备（8.1、9.1）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为ABCD（主机设备、存储设备、网络设备、安全设备）。依据8.1、9.1。"
+  },
+  {
+    "id": 144,
+    "type": "多选题",
+    "stem": "根据信息安规规定，工作票由（ ）签发。",
+    "options": [
+      {
+        "label": "A",
+        "text": "业务主管部门（业务归口管理部门）"
+      },
+      {
+        "label": "B",
+        "text": "信息运维单位（部门）"
+      },
+      {
+        "label": "C",
+        "text": "安监部门"
+      },
+      {
+        "label": "D",
+        "text": "经信息运维单位（部门）审核批准的检修单位"
+      }
+    ],
+    "answer": "BD",
+    "basis": "5.2.4 g)",
+    "analysis": "",
+    "mnemonic": "选BD：信息运维单位、经信息运维单（5.2.4 g)）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为BD（信息运维单位（部门）、经信息运维单位（部门）审核批准的检修单位）。业务主管部门（业务归口管理部门）、安监部门不属于正确选项。依据5.2.4 g)。"
+  },
+  {
+    "id": 145,
+    "type": "多选题",
+    "stem": "根据信息安规规定，工作票制度中对于其他不需填用信息工作票的工作，应使用其他书面记录执行。其他书面记录包含以下哪几种（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "工单"
+      },
+      {
+        "label": "B",
+        "text": "出入记录"
+      },
+      {
+        "label": "C",
+        "text": "工作记录"
+      },
+      {
+        "label": "D",
+        "text": "巡视记录"
+      }
+    ],
+    "answer": "ACD",
+    "basis": "5.2.3",
+    "analysis": "",
+    "mnemonic": "选ACD：工单、工作记录、巡视记录（5.2.3）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为ACD（工单、工作记录、巡视记录）。出入记录不属于正确选项。依据5.2.3。"
+  },
+  {
+    "id": 146,
+    "type": "多选题",
+    "stem": "根据信息安规规定，工作许可人在向工作负责人发出许可工作的命令前，应记录（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "工作班名称"
+      },
+      {
+        "label": "B",
+        "text": "工作负责人姓名"
+      },
+      {
+        "label": "C",
+        "text": "工作地点"
+      },
+      {
+        "label": "D",
+        "text": "工作任务"
+      }
+    ],
+    "answer": "ABCD",
+    "basis": "5.3.2",
+    "analysis": "",
+    "mnemonic": "选ABCD：工作班名称、工作负责人姓、工作地点、工作任务（5.3.2）\n（口诀：签发审票批·许可现场启·负责人带队监护·三者不兼任）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为ABCD（工作班名称、工作负责人姓名、工作地点、工作任务）。依据5.3.2。"
+  },
+  {
+    "id": 147,
+    "type": "多选题",
+    "stem": "根据信息安规规定，工作终结报告应按（ ）方式进行。",
+    "options": [
+      {
+        "label": "A",
+        "text": "当面报告"
+      },
+      {
+        "label": "B",
+        "text": "电话报告（电子信息报告）"
+      },
+      {
+        "label": "C",
+        "text": "传真报告"
+      },
+      {
+        "label": "D",
+        "text": "邮件报告"
+      }
+    ],
+    "answer": "AB",
+    "basis": "5.4.3",
+    "analysis": "",
+    "mnemonic": "选AB：当面报告、电话报告（电（5.4.3）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为AB（当面报告、电话报告（电子信息报告））。传真报告、邮件报告不属于正确选项。依据5.4.3。"
+  },
+  {
+    "id": 148,
+    "type": "多选题",
+    "stem": "根据信息安规规定，工作终结电话报告（电子信息报告）中。工作许可人和工作负责人应分别在信息工作票上记录（ ）和（ ），并复诵或电子信息回复核对无误，电话报告过程应留下电话录音，电子信息报告记录应留存。",
+    "options": [
+      {
+        "label": "A",
+        "text": "终结时间"
+      },
+      {
+        "label": "B",
+        "text": "双方姓名"
+      },
+      {
+        "label": "C",
+        "text": "发现的问题"
+      },
+      {
+        "label": "D",
+        "text": "工作内容"
+      }
+    ],
+    "answer": "AB",
+    "basis": "5.4.3 b)",
+    "analysis": "",
+    "mnemonic": "选AB：终结时间、双方姓名（5.4.3 b)）\n（口诀：签发审票批·许可现场启·负责人带队监护·三者不兼任）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为AB（终结时间、双方姓名）。发现的问题、工作内容不属于正确选项。依据5.4.3 b)。"
+  },
+  {
+    "id": 149,
+    "type": "多选题",
+    "stem": "根据信息安规规定，工作终结制度中，使用信息工作票的工作，工作负责人应向工作许可人交待（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "工作内容"
+      },
+      {
+        "label": "B",
+        "text": "发现的问题"
+      },
+      {
+        "label": "C",
+        "text": "验证结果"
+      },
+      {
+        "label": "D",
+        "text": "存在问题"
+      }
+    ],
+    "answer": "ABCD",
+    "basis": "5.4.2",
+    "analysis": "",
+    "mnemonic": "选ABCD：工作内容、发现的问题、验证结果、存在问题（5.4.2）\n（口诀：签发审票批·许可现场启·负责人带队监护·三者不兼任）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为ABCD（工作内容、发现的问题、验证结果、存在问题）。依据5.4.2。"
+  },
+  {
+    "id": 150,
+    "type": "多选题",
+    "stem": "根据信息安规规定，管理信息区、互联网区业务系统使用无线网络传输业务信息时，应具备接入认证、加密等安全机制；接入管理信息区时，应使用（ ）等安全措施。",
+    "options": [
+      {
+        "label": "A",
+        "text": "接入认证"
+      },
+      {
+        "label": "B",
+        "text": "隔离"
+      },
+      {
+        "label": "C",
+        "text": "国家电网公司认可的承载通道"
+      },
+      {
+        "label": "D",
+        "text": "加密"
+      }
+    ],
+    "answer": "ABCD",
+    "basis": "4.3.15",
+    "analysis": "",
+    "mnemonic": "选ABCD：接入认证、隔离、国家电网公司、加密（4.3.15）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为ABCD（接入认证、隔离、国家电网公司认可的承载通道、加密）。依据4.3.15。"
+  },
+  {
+    "id": 151,
+    "type": "多选题",
+    "stem": "根据信息安规规定，管理信息区是指由承载国家电网公司（ ）构成的安全区域。",
+    "options": [
+      {
+        "label": "A",
+        "text": "核心生产"
+      },
+      {
+        "label": "B",
+        "text": "经营"
+      },
+      {
+        "label": "C",
+        "text": "管理"
+      },
+      {
+        "label": "D",
+        "text": "涉商密业务系统"
+      }
+    ],
+    "answer": "ABCD",
+    "basis": "3.4.0",
+    "analysis": "",
+    "mnemonic": "选ABCD：核心生产、经营、管理、涉商密业务系（3.4.0）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为ABCD（核心生产、经营、管理、涉商密业务系统）。依据3.4.0。"
+  },
+  {
+    "id": 152,
+    "type": "多选题",
+    "stem": "根据信息安规规定，互联网区是由（ ）构成的安全区域。",
+    "options": [
+      {
+        "label": "A",
+        "text": "对外服务类业务系统"
+      },
+      {
+        "label": "B",
+        "text": "对内服务类业务系统"
+      },
+      {
+        "label": "C",
+        "text": "互联网新兴业务系统"
+      },
+      {
+        "label": "D",
+        "text": "云平台相关业务"
+      }
+    ],
+    "answer": "AC",
+    "basis": "3.5.0",
+    "analysis": "",
+    "mnemonic": "选AC：对外服务类业、互联网新兴业（3.5.0）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为AC（对外服务类业务系统、互联网新兴业务系统）。对内服务类业务系统、云平台相关业务不属于正确选项。依据3.5.0。"
+  },
+  {
+    "id": 153,
+    "type": "多选题",
+    "stem": "根据信息安规规定，机房及相关设施宜配备（ ）等安全设施。",
+    "options": [
+      {
+        "label": "A",
+        "text": "防盗"
+      },
+      {
+        "label": "B",
+        "text": "防小动物"
+      },
+      {
+        "label": "C",
+        "text": "防低温"
+      },
+      {
+        "label": "D",
+        "text": "防噪音"
+      }
+    ],
+    "answer": "AB",
+    "basis": "4.2.5",
+    "analysis": "",
+    "mnemonic": "选AB：防盗、防小动物（4.2.5）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为AB（防盗、防小动物）。防低温、防噪音不属于正确选项。依据4.2.5。"
+  },
+  {
+    "id": 154,
+    "type": "多选题",
+    "stem": "根据信息安规规定，机房内的（ ）及消防系统应符合有关标准、规范的要求。",
+    "options": [
+      {
+        "label": "A",
+        "text": "照明"
+      },
+      {
+        "label": "B",
+        "text": "温度"
+      },
+      {
+        "label": "C",
+        "text": "湿度"
+      },
+      {
+        "label": "D",
+        "text": "防静电设施"
+      }
+    ],
+    "answer": "ABCD",
+    "basis": "4.2.3",
+    "analysis": "",
+    "mnemonic": "选ABCD：照明、温度、湿度、防静电设施（4.2.3）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为ABCD（照明、温度、湿度、防静电设施）。依据4.2.3。"
+  },
+  {
+    "id": 155,
+    "type": "多选题",
+    "stem": "根据信息安规规定，检修工作如需关闭（ ），应确认所承载的数据库、中间件、业务系统可停运或已转移。",
+    "options": [
+      {
+        "label": "A",
+        "text": "网络设备"
+      },
+      {
+        "label": "B",
+        "text": "安全设备"
+      },
+      {
+        "label": "C",
+        "text": "主机设备"
+      },
+      {
+        "label": "D",
+        "text": "存储设备"
+      }
+    ],
+    "answer": "CD",
+    "basis": "6.4.4",
+    "analysis": "",
+    "mnemonic": "选CD：主机设备、存储设备（6.4.4）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为CD（主机设备、存储设备）。网络设备、安全设备不属于正确选项。依据6.4.4。"
+  },
+  {
+    "id": 156,
+    "type": "多选题",
+    "stem": "根据信息安规规定，检修工作如需关闭（ ），应确认所承载的业务可停用或已转移。",
+    "options": [
+      {
+        "label": "A",
+        "text": "网络设备"
+      },
+      {
+        "label": "B",
+        "text": "安全设备"
+      },
+      {
+        "label": "C",
+        "text": "主机设备"
+      },
+      {
+        "label": "D",
+        "text": "存储设备"
+      }
+    ],
+    "answer": "AB",
+    "basis": "6.4.3",
+    "analysis": "",
+    "mnemonic": "选AB：网络设备、安全设备（6.4.3）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为AB（网络设备、安全设备）。主机设备、存储设备不属于正确选项。依据6.4.3。"
+  },
+  {
+    "id": 157,
+    "type": "多选题",
+    "stem": "根据信息安规规定，检修工作如需关闭主机设备、存储设备，应确认所承载的（ ）可停运或已转移。",
+    "options": [
+      {
+        "label": "A",
+        "text": "数据库"
+      },
+      {
+        "label": "B",
+        "text": "中间件"
+      },
+      {
+        "label": "C",
+        "text": "业务系统"
+      },
+      {
+        "label": "D",
+        "text": "操作系统"
+      }
+    ],
+    "answer": "ABC",
+    "basis": "6.4.4",
+    "analysis": "",
+    "mnemonic": "选ABC：数据库、中间件、业务系统（6.4.4）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为ABC（数据库、中间件、业务系统）。操作系统不属于正确选项。依据6.4.4。"
+  },
+  {
+    "id": 158,
+    "type": "多选题",
+    "stem": "根据信息安规规定，检修工作如需停运数据库、中间件、云平台组件，应确认所承载的业务（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "可停用"
+      },
+      {
+        "label": "B",
+        "text": "不受影响"
+      },
+      {
+        "label": "C",
+        "text": "正常运行"
+      },
+      {
+        "label": "D",
+        "text": "已转移"
+      }
+    ],
+    "answer": "AD",
+    "basis": "6.4.5",
+    "analysis": "",
+    "mnemonic": "选AD：可停用、已转移（6.4.5）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为AD（可停用、已转移）。不受影响、正常运行不属于正确选项。依据6.4.5。"
+  },
+  {
+    "id": 159,
+    "type": "多选题",
+    "stem": "根据信息安规规定，检修前，在冗余系统（双/多机、双/多节点、双/多通道或双/多电源）中将检修设备切换成检修状态时，应确认其余（ ）正常运行。",
+    "options": [
+      {
+        "label": "A",
+        "text": "主机"
+      },
+      {
+        "label": "B",
+        "text": "节点"
+      },
+      {
+        "label": "C",
+        "text": "通道"
+      },
+      {
+        "label": "D",
+        "text": "电源"
+      }
+    ],
+    "answer": "ABCD",
+    "basis": "6.4.2",
+    "analysis": "",
+    "mnemonic": "选ABCD：主机、节点、通道、电源（6.4.2）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为ABCD（主机、节点、通道、电源）。依据6.4.2。"
+  },
+  {
+    "id": 160,
+    "type": "多选题",
+    "stem": "根据信息安规规定，升级（ ）、（ ）或（ ）版本前，应确认其兼容性及对业务系统的影响。",
+    "options": [
+      {
+        "label": "A",
+        "text": "操作系统"
+      },
+      {
+        "label": "B",
+        "text": "数据库"
+      },
+      {
+        "label": "C",
+        "text": "中间件版本"
+      },
+      {
+        "label": "D",
+        "text": "云平台组件"
+      }
+    ],
+    "answer": "ABCD",
+    "basis": "6.4.6",
+    "analysis": "",
+    "mnemonic": "选ABCD：操作系统、数据库、中间件版本、云平台组件（6.4.6）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为ABCD（操作系统、数据库、中间件版本、云平台组件）。依据6.4.6。"
+  },
+  {
+    "id": 161,
+    "type": "多选题",
+    "stem": "根据信息安规规定，网络设备或安全设备检修工作结束前，应验证（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "设备运行正常"
+      },
+      {
+        "label": "B",
+        "text": "所承载的业务运行正常"
+      },
+      {
+        "label": "C",
+        "text": "配置策略已备份"
+      },
+      {
+        "label": "D",
+        "text": "配置策略符合要求"
+      }
+    ],
+    "answer": "ABD",
+    "basis": "8.2.0",
+    "analysis": "",
+    "mnemonic": "检修结束前验证业务正常",
+    "explanation": "主机设备或存储设备检修工作结束前，应验证设备及所承载的业务运行正常。\"结束前\"验证确保检修后系统可正常投运。"
+  },
+  {
+    "id": 162,
+    "type": "多选题",
+    "stem": "根据信息安规规定，现场使用的（ ）等应符合有关安全要求。",
+    "options": [
+      {
+        "label": "A",
+        "text": "工器具"
+      },
+      {
+        "label": "B",
+        "text": "调试计算机（或其他专用设备）"
+      },
+      {
+        "label": "C",
+        "text": "外接存储设备"
+      },
+      {
+        "label": "D",
+        "text": "软件工具"
+      }
+    ],
+    "answer": "ABCD",
+    "basis": "4.2.2",
+    "analysis": "",
+    "mnemonic": "选ABCD：工器具、调试计算机（、外接存储设备、软件工具（4.2.2）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为ABCD（工器具、调试计算机（或其他专用设备）、外接存储设备、软件工具）。依据4.2.2。"
+  },
+  {
+    "id": 163,
+    "type": "多选题",
+    "stem": "根据信息安规规定，信息系统的（ ）等应定期备份，备份的数据宜定期进行验证。",
+    "options": [
+      {
+        "label": "A",
+        "text": "临时账号"
+      },
+      {
+        "label": "B",
+        "text": "配置"
+      },
+      {
+        "label": "C",
+        "text": "特征库"
+      },
+      {
+        "label": "D",
+        "text": "业务数据"
+      }
+    ],
+    "answer": "BD",
+    "basis": "7.4.0",
+    "analysis": "",
+    "mnemonic": "选BD：配置、业务数据（7.4.0）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为BD（配置、业务数据）。临时账号、特征库不属于正确选项。依据7.4.0。"
+  },
+  {
+    "id": 164,
+    "type": "多选题",
+    "stem": "根据信息安规规定，信息系统的过期账号及其权限应及时（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "注销"
+      },
+      {
+        "label": "B",
+        "text": "冻结"
+      },
+      {
+        "label": "C",
+        "text": "调整"
+      },
+      {
+        "label": "D",
+        "text": "备案"
+      }
+    ],
+    "answer": "ABC",
+    "basis": "4.3.4",
+    "analysis": "",
+    "mnemonic": "选ABC：注销、冻结、调整（4.3.4）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为ABC（注销、冻结、调整）。备案不属于正确选项。依据4.3.4。"
+  },
+  {
+    "id": 165,
+    "type": "多选题",
+    "stem": "根据信息安规规定，信息系统检修工作开始前，应备份可能受到影响的（ ）等。",
+    "options": [
+      {
+        "label": "A",
+        "text": "配置文件"
+      },
+      {
+        "label": "B",
+        "text": "业务数据"
+      },
+      {
+        "label": "C",
+        "text": "运行参数"
+      },
+      {
+        "label": "D",
+        "text": "日志文件"
+      }
+    ],
+    "answer": "ABCD",
+    "basis": "6.3.1",
+    "analysis": "",
+    "mnemonic": "选ABCD：配置文件、业务数据、运行参数、日志文件（6.3.1）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为ABCD（配置文件、业务数据、运行参数、日志文件）。依据6.3.1。"
+  },
+  {
+    "id": 166,
+    "type": "多选题",
+    "stem": "根据信息安规规定，信息系统上线前，应在具有资质的测试机构进行安全测试，并取得检测合格报告，应删除（ ），并修改系统账号默认口令。",
+    "options": [
+      {
+        "label": "A",
+        "text": "系统账号"
+      },
+      {
+        "label": "B",
+        "text": "临时账号"
+      },
+      {
+        "label": "C",
+        "text": "临时数据"
+      },
+      {
+        "label": "D",
+        "text": "日志记录"
+      }
+    ],
+    "answer": "BC",
+    "basis": "4.3.6",
+    "analysis": "",
+    "mnemonic": "选BC：临时账号、临时数据（4.3.6）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为BC（临时账号、临时数据）。系统账号、日志记录不属于正确选项。依据4.3.6。"
+  },
+  {
+    "id": 167,
+    "type": "多选题",
+    "stem": "根据信息安规规定，信息系统远程检修应使用运维专机，并使用（ ）或（ ）的传输协议，且宜通过具备运维审计功能的设备开展。",
+    "options": [
+      {
+        "label": "A",
+        "text": "加密"
+      },
+      {
+        "label": "B",
+        "text": "私有"
+      },
+      {
+        "label": "C",
+        "text": "专用"
+      },
+      {
+        "label": "D",
+        "text": "可靠"
+      }
+    ],
+    "answer": "AC",
+    "basis": "4.3.3",
+    "analysis": "",
+    "mnemonic": "选AC：加密、专用（4.3.3）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为AC（加密、专用）。私有、可靠不属于正确选项。依据4.3.3。"
+  },
+  {
+    "id": 168,
+    "type": "多选题",
+    "stem": "根据信息安规规定，蓄电池组接入电源前，应确认（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "蓄电池组正负极性与整流器输入正负极性对应"
+      },
+      {
+        "label": "B",
+        "text": "蓄电池组正负极性与整流器直流输出正负极性对应"
+      },
+      {
+        "label": "C",
+        "text": "蓄电池组电压与整流器输入电压匹配"
+      },
+      {
+        "label": "D",
+        "text": "蓄电池组电压与整流器输出电压匹配"
+      }
+    ],
+    "answer": "BD",
+    "basis": "13.3.3",
+    "analysis": "",
+    "mnemonic": "选BD：蓄电池组正负、蓄电池组电压（13.3.3）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为BD（蓄电池组正负极性与整流器直流输出正负极性对应、蓄电池组电压与整流器输出电压匹配）。蓄电池组正负极性与整流器输入正负极性对应、蓄电池组电压与整流器输入电压匹配不属于正确选项。依据13.3.3。"
+  },
+  {
+    "id": 169,
+    "type": "多选题",
+    "stem": "根据信息安规规定，以下哪些工作行为应填用信息工作票（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "业务系统的上下线工作"
+      },
+      {
+        "label": "B",
+        "text": "业务系统和中间件的迁移、版本升级、功能新增、性能调优、配置变更、缺陷故障修复、安全加固、漏洞修复等检修工作"
+      },
+      {
+        "label": "C",
+        "text": "主机设备、存储设备、安全设备的投运退运、硬件变更、版本升级、功能新增、性能调优、安全加固、缺陷故障修复、漏洞修复等检修工作"
+      },
+      {
+        "label": "D",
+        "text": "地市供电公司级以上单位信息网络的汇聚层网络设备的投运、检修工作"
+      }
+    ],
+    "answer": "ABC",
+    "basis": "5.2.2",
+    "analysis": "",
+    "mnemonic": "选ABC：业务系统的上、业务系统和中、主机设备、存（5.2.2）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为ABC（业务系统的上下线工作、业务系统和中间件的迁移、版本升级、功能新增、性能调优、配置变更、缺陷故障修复、安全加固、漏洞修复等检修工作、主机设备、存储设备、安全设备的投运退运、硬件变更、版本升级、功能新增、性能调优、安全加固、缺陷故障修复、漏洞修复等检修工作）。地市供电公司级以上单位信息网络的汇聚层网络设备的投运、检修工作不属于正确选项。依据5.2.2。"
+  },
+  {
+    "id": 170,
+    "type": "多选题",
+    "stem": "根据信息安规规定，以下属于工作班成员的安全责任有（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "熟悉工作内容、工作流程，清楚工作中的风险点和安全措施，并在工作票上签名确认"
+      },
+      {
+        "label": "B",
+        "text": "服从工作负责人的指挥，严格遵守本规程和劳动纪律，在确定的作业范围内工作"
+      },
+      {
+        "label": "C",
+        "text": "对自己在工作中的行为负责，互相关心工作安全"
+      },
+      {
+        "label": "D",
+        "text": "正确使用工器具、调试计算机（或其他专用设备）、外接存储设备以及软件工具等"
+      }
+    ],
+    "answer": "ABCD",
+    "basis": "5.2.8 d)",
+    "analysis": "",
+    "mnemonic": "选ABCD：熟悉工作内容、服从工作负责、对自己在工作、正确使用工器（5.2.8 d)）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为ABCD（熟悉工作内容、工作流程，清楚工作中的风险点和安全措施，并在工作票上签名确认、服从工作负责人的指挥，严格遵守本规程和劳动纪律，在确定的作业范围内工作、对自己在工作中的行为负责，互相关心工作安全、正确使用工器具、调试计算机（或其他专用设备）、外接存储设备以及软件工具等）。依据5.2.8 d)。"
+  },
+  {
+    "id": 171,
+    "type": "多选题",
+    "stem": "根据信息安规规定，以下属于工作负责人的安全责任有（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确组织工作"
+      },
+      {
+        "label": "B",
+        "text": "组织执行工作票所列由其负责的安全措施"
+      },
+      {
+        "label": "C",
+        "text": "确定需监护的作业内容，并监护工作班成员认真执行"
+      },
+      {
+        "label": "D",
+        "text": "确认工作票所列的安全措施已实施"
+      }
+    ],
+    "answer": "ABC",
+    "basis": "5.2.8 b)",
+    "analysis": "",
+    "mnemonic": "选ABC：正确组织工作、组织执行工作、确定需监护的（5.2.8 b)）\n（口诀：签发审票批·许可现场启·负责人带队监护·三者不兼任）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为ABC（正确组织工作、组织执行工作票所列由其负责的安全措施、确定需监护的作业内容，并监护工作班成员认真执行）。确认工作票所列的安全措施已实施不属于正确选项。依据5.2.8 b)。"
+  },
+  {
+    "id": 172,
+    "type": "多选题",
+    "stem": "根据信息安规规定，以下属于工作票签发人的安全责任有（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "确认工作必要性和安全性"
+      },
+      {
+        "label": "B",
+        "text": "确认工作票上所填安全措施是否正确完备"
+      },
+      {
+        "label": "C",
+        "text": "确认所派工作负责人和工作班人员是否适当、充足"
+      },
+      {
+        "label": "D",
+        "text": "对工作班成员进行工作任务、安全措施、技术措施交底和危险点告知"
+      }
+    ],
+    "answer": "ABC",
+    "basis": "5.2.8 a)",
+    "analysis": "",
+    "mnemonic": "选ABC：确认工作必要、确认工作票上、确认所派工作（5.2.8 a)）\n（口诀：签发审票批·许可现场启·负责人带队监护·三者不兼任）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为ABC（确认工作必要性和安全性、确认工作票上所填安全措施是否正确完备、确认所派工作负责人和工作班人员是否适当、充足）。对工作班成员进行工作任务、安全措施、技术措施交底和危险点告知不属于正确选项。依据5.2.8 a)。"
+  },
+  {
+    "id": 173,
+    "type": "多选题",
+    "stem": "根据信息安规规定，以下属于工作许可人的安全责任有（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "检查工作票所列安全措施是否正确完备，是否符合现场实际条件，必要时予以补充完善"
+      },
+      {
+        "label": "B",
+        "text": "确认工作具备条件，工作不具备条件时应退回工作票"
+      },
+      {
+        "label": "C",
+        "text": "组织执行工作票所列由其负责的安全措施"
+      },
+      {
+        "label": "D",
+        "text": "确认工作票所列的安全措施已实施"
+      }
+    ],
+    "answer": "BD",
+    "basis": "5.2.8 c)",
+    "analysis": "",
+    "mnemonic": "选BD：确认工作具备、确认工作票所（5.2.8 c)）\n（口诀：签发审票批·许可现场启·负责人带队监护·三者不兼任）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为BD（确认工作具备条件，工作不具备条件时应退回工作票、确认工作票所列的安全措施已实施）。检查工作票所列安全措施是否正确完备，是否符合现场实际条件，必要时予以补充完善、组织执行工作票所列由其负责的安全措施不属于正确选项。依据5.2.8 c)。"
+  },
+  {
+    "id": 174,
+    "type": "多选题",
+    "stem": "根据信息安规规定，以下属于互联网区的互联网新兴业务系统的有（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "综合能源服务"
+      },
+      {
+        "label": "B",
+        "text": "车联网"
+      },
+      {
+        "label": "C",
+        "text": "光伏云网"
+      },
+      {
+        "label": "D",
+        "text": "移动办公"
+      }
+    ],
+    "answer": "ABCD",
+    "basis": "3.5.0",
+    "analysis": "",
+    "mnemonic": "选ABCD：综合能源服务、车联网、光伏云网、移动办公（3.5.0）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为ABCD（综合能源服务、车联网、光伏云网、移动办公）。依据3.5.0。"
+  },
+  {
+    "id": 175,
+    "type": "多选题",
+    "stem": "根据信息安规规定，以下属于信息系统运行工作的有（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "信息系统运行监控、巡视检查"
+      },
+      {
+        "label": "B",
+        "text": "信息系统资源及台账管理"
+      },
+      {
+        "label": "C",
+        "text": "信息系统权限及口令管理"
+      },
+      {
+        "label": "D",
+        "text": "信息系统运行统计分析"
+      }
+    ],
+    "answer": "ABCD",
+    "basis": "3.2.0",
+    "analysis": "",
+    "mnemonic": "选ABCD：信息系统运行、信息系统资源、信息系统权限、信息系统运行（3.2.0）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为ABCD（信息系统运行监控、巡视检查、信息系统资源及台账管理、信息系统权限及口令管理、信息系统运行统计分析）。依据3.2.0。"
+  },
+  {
+    "id": 176,
+    "type": "多选题",
+    "stem": "根据信息安规规定，云平台检修前，应备份可能受到影响的（ ）等。",
+    "options": [
+      {
+        "label": "A",
+        "text": "业务数据"
+      },
+      {
+        "label": "B",
+        "text": "配置文件"
+      },
+      {
+        "label": "C",
+        "text": "运行参数"
+      },
+      {
+        "label": "D",
+        "text": "日志文件"
+      }
+    ],
+    "answer": "ABCD",
+    "basis": "6.3.6",
+    "analysis": "",
+    "mnemonic": "选ABCD：业务数据、配置文件、运行参数、日志文件（6.3.6）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为ABCD（业务数据、配置文件、运行参数、日志文件）。依据6.3.6。"
+  },
+  {
+    "id": 177,
+    "type": "多选题",
+    "stem": "根据信息安规规定，运行中的信息系统包括（ ）的信息系统。",
+    "options": [
+      {
+        "label": "A",
+        "text": "上线试运行"
+      },
+      {
+        "label": "B",
+        "text": "正式运行"
+      },
+      {
+        "label": "C",
+        "text": "测试中"
+      },
+      {
+        "label": "D",
+        "text": "临时运行"
+      }
+    ],
+    "answer": "ABD",
+    "basis": "1.0.0",
+    "analysis": "",
+    "mnemonic": "选ABD：上线试运行、正式运行、临时运行（1.0.0）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为ABD（上线试运行、正式运行、临时运行）。测试中不属于正确选项。依据1.0.0。"
+  },
+  {
+    "id": 178,
+    "type": "多选题",
+    "stem": "根据信息安规规定，在工作票制度中，数据库的（ ）等检修工作是应填用信息工作票的工作。",
+    "options": [
+      {
+        "label": "A",
+        "text": "部署调试"
+      },
+      {
+        "label": "B",
+        "text": "版本升级"
+      },
+      {
+        "label": "C",
+        "text": "性能调优"
+      },
+      {
+        "label": "D",
+        "text": "配置变更"
+      }
+    ],
+    "answer": "ABCD",
+    "basis": "5.2.2 c)",
+    "analysis": "",
+    "mnemonic": "选ABCD：部署调试、版本升级、性能调优、配置变更（5.2.2 c)）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为ABCD（部署调试、版本升级、性能调优、配置变更）。依据5.2.2 c)。"
+  },
+  {
+    "id": 179,
+    "type": "多选题",
+    "stem": "根据信息安规规定，在信息系统上的工作，应按下列哪种方式进行（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "填用信息工作票"
+      },
+      {
+        "label": "B",
+        "text": "填用信息工作任务单"
+      },
+      {
+        "label": "C",
+        "text": "使用其他书面记录、电子信息"
+      },
+      {
+        "label": "D",
+        "text": "按口头、电话命令执行"
+      }
+    ],
+    "answer": "ACD",
+    "basis": "5.2.1",
+    "analysis": "",
+    "mnemonic": "选ACD：填用信息工作、使用其他书面、按口头、电话（5.2.1）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为ACD（填用信息工作票、使用其他书面记录、电子信息、按口头、电话命令执行）。填用信息工作任务单不属于正确选项。依据5.2.1。"
+  },
+  {
+    "id": 180,
+    "type": "多选题",
+    "stem": "根据信息安规规定，终端设备用户应妥善保管（ ），不得随意授予他人。",
+    "options": [
+      {
+        "label": "A",
+        "text": "账号"
+      },
+      {
+        "label": "B",
+        "text": "数据"
+      },
+      {
+        "label": "C",
+        "text": "密码"
+      },
+      {
+        "label": "D",
+        "text": "信息"
+      }
+    ],
+    "answer": "AC",
+    "basis": "14.1.0",
+    "analysis": "",
+    "mnemonic": "选AC：账号、密码（14.1.0）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为AC（账号、密码）。数据、信息不属于正确选项。依据14.1.0。"
+  },
+  {
+    "id": 181,
+    "type": "多选题",
+    "stem": "根据信息安规规定，作业人员应被告知其作业现场和工作岗位存在的（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "安全风险"
+      },
+      {
+        "label": "B",
+        "text": "安全注意事项"
+      },
+      {
+        "label": "C",
+        "text": "事故防范措施"
+      },
+      {
+        "label": "D",
+        "text": "紧急处理措施"
+      }
+    ],
+    "answer": "ABCD",
+    "basis": "4.4.3",
+    "analysis": "",
+    "mnemonic": "告知四项：风险、注意、防范、应急",
+    "explanation": "作业人员应被告知四项内容：安全风险、安全注意事项、事故防范措施、紧急情况下的应急措施。注意不是\"应急预案\"而是\"安全注意事项\"，两者不同。"
+  },
+  {
+    "id": 182,
+    "type": "多选题",
+    "stem": "根据信息安规规定，作业人员在发现危及信息系统和数据安全的紧急情况时，有权（ ），并立即报告。",
+    "options": [
+      {
+        "label": "A",
+        "text": "结束工作票"
+      },
+      {
+        "label": "B",
+        "text": "立即离开作业现场"
+      },
+      {
+        "label": "C",
+        "text": "停止作业"
+      },
+      {
+        "label": "D",
+        "text": "采取紧急措施"
+      }
+    ],
+    "answer": "CD",
+    "basis": "4.4.4",
+    "analysis": "",
+    "mnemonic": "选CD：停止作业、采取紧急措施（4.4.4）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为CD（停止作业、采取紧急措施）。结束工作票、立即离开作业现场不属于正确选项。依据4.4.4。"
+  },
+  {
+    "id": 183,
+    "type": "多选题",
+    "stem": "为加强信息作业管理，规范各类人员行为，保证（ ）及（ ）安全，依据国家有关法律、法规，结合信息作业实际，制定《国家电网公司电力安全工作规程第9部分：信息部分》。",
+    "options": [
+      {
+        "label": "A",
+        "text": "网络"
+      },
+      {
+        "label": "B",
+        "text": "信息"
+      },
+      {
+        "label": "C",
+        "text": "设备"
+      },
+      {
+        "label": "D",
+        "text": "电网"
+      }
+    ],
+    "answer": "AB",
+    "basis": "编制说明1.0.0",
+    "analysis": "",
+    "mnemonic": "选AB：网络、信息（编制说明1.0.0）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为AB（网络、信息）。设备、电网不属于正确选项。依据编制说明1.0.0。"
+  },
+  {
+    "id": 184,
+    "type": "多选题",
+    "stem": "依据信息安规规定，管理信息区与互联网区之间应有（ ），管理信息区与生产控制区之间应有（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "物理隔离"
+      },
+      {
+        "label": "B",
+        "text": "逻辑隔离"
+      },
+      {
+        "label": "C",
+        "text": "强逻辑隔离"
+      },
+      {
+        "label": "D",
+        "text": "单向隔离"
+      }
+    ],
+    "answer": "CD",
+    "basis": "3.4.0",
+    "analysis": "",
+    "mnemonic": "管理信息区=核心生产管理业务",
+    "explanation": "本题考查信息安规相关知识点。正确答案为CD（强逻辑隔离、单向隔离）。物理隔离、逻辑隔离不属于正确选项。依据3.4.0。"
+  },
+  {
+    "id": 185,
+    "type": "多选题",
+    "stem": "依据信息安规规定，以下属于信息系统检修对信息系统开展的工作有（ ）。",
+    "options": [
+      {
+        "label": "A",
+        "text": "部署"
+      },
+      {
+        "label": "B",
+        "text": "检查"
+      },
+      {
+        "label": "C",
+        "text": "维护"
+      },
+      {
+        "label": "D",
+        "text": "故障处理"
+      }
+    ],
+    "answer": "ABCD",
+    "basis": "3.3.0",
+    "analysis": "",
+    "mnemonic": "选ABCD：部署、检查、维护、故障处理（3.3.0）",
+    "explanation": "本题考查信息安规相关知识点。正确答案为ABCD（部署、检查、维护、故障处理）。依据3.3.0。"
+  },
+  {
+    "id": 186,
+    "type": "判断题",
+    "stem": "《国家电网公司电力安全工作规程第9部分：信息部分》中的信息系统不包括电力监控系统、调控中心安全Ⅲ区中的信息系统和通信网管系统。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "3.1.0",
+    "analysis": "",
+    "mnemonic": "信息安规不含：电力监控+调控Ⅲ区+通信网管",
+    "explanation": "正确。信息安规中的信息系统不包括电力监控系统、调控中心安全Ⅲ区中的信息系统和通信网管系统，这些有专门的规程管理。"
+  },
+  {
+    "id": 187,
+    "type": "判断题",
+    "stem": "参与公司信息工作的外来作业人员应熟悉《国家电网公司电力安全工作规程第9部分：信息部分》，经考试合格后，方可参加工作。",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "4.1.4",
+    "analysis": "参与公司信息工作的外来作业人员应熟悉《国家电网公司电力安全工作规程第9部分：信息部分》，经考试合格后，并经信息运维部门（单位）认可，方可参加工作。",
+    "mnemonic": "外来人员：考试合格+运维认可才能参加",
+    "explanation": "参与公司信息工作的外来作业人员应熟悉《国家电网公司电力安全工作规程第9部分：信息部分》，经考试合格后，并经信息运维部门（单位）认可，方可参加工作。（依据：4.1.4）"
+  },
+  {
+    "id": 188,
+    "type": "判断题",
+    "stem": "各单位可根据实际情况制定《国家电网公司电力安全工作规程第9部分：信息部分》的实施细则，经信息通信职能管理部门批准后执行。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "4.4.6",
+    "analysis": "各单位可根据实际情况制定本文件的实施细则，经本单位批准后执行。",
+    "mnemonic": "实施细则：本单位批准后执行",
+    "explanation": "各单位可根据实际情况制定本文件的实施细则，经本单位批准后执行。（依据：4.4.6）"
+  },
+  {
+    "id": 189,
+    "type": "判断题",
+    "stem": "根据信息安规规定， 管理信息区、互联网区业务系统使用无线网络传输业务信息时，应具备接入认证、加密等安全机制。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "4.3.15",
+    "analysis": "",
+    "mnemonic": "选A：正确（4.3.15）",
+    "explanation": "正确。根据信息安规规定， 管理信息区、互联网区业务系统使用无线网络传输业务信息时，应具备接入认证、加密等安全机制。。"
+  },
+  {
+    "id": 190,
+    "type": "判断题",
+    "stem": "根据信息安规规定，安全设备特征库宜定期更新。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "7.2.0",
+    "analysis": "根据信息安规规定，安全设备特征库应定期更新。",
+    "mnemonic": "安全设备特征库定期更新",
+    "explanation": "根据信息安规规定，安全设备特征库应定期更新。（依据：7.2.0）"
+  },
+  {
+    "id": 191,
+    "type": "判断题",
+    "stem": "根据信息安规规定，办公计算机宜安装防病毒、桌面管理等安全防护软件。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "14.3.0",
+    "analysis": "根据信息安规规定，办公计算机应安装防病毒、桌面管理等安全防护软件。",
+    "mnemonic": "办公计算机：防病毒+桌面管理",
+    "explanation": "根据信息安规规定，办公计算机应安装防病毒、桌面管理等安全防护软件。（依据：14.3.0）"
+  },
+  {
+    "id": 192,
+    "type": "判断题",
+    "stem": "根据信息安规规定，办理信息工作票延期手续，应在信息工作票的有效期内，由工作负责人向工作票签发人提出申请，得到同意后给予办理。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "5.2.6 b)",
+    "analysis": "根据信息安规规定，办理信息工作票延期手续，应在信息工作票的有效期内，由工作负责人向工作许可人提出申请，得到同意后给予办理。",
+    "mnemonic": "延期找许可，有效期内办\n（口诀：签发审票批·许可现场启·负责人带队监护·三者不兼任）",
+    "explanation": "根据信息安规规定，办理信息工作票延期手续，应在信息工作票的有效期内，由工作负责人向工作许可人提出申请，得到同意后给予办理。（依据：5.2.6 b)）"
+  },
+  {
+    "id": 193,
+    "type": "判断题",
+    "stem": "根据信息安规规定，报废终端设备、员工离岗离职时留下的终端设备应交由相关运维单位（部门）处理。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "14.1.0",
+    "analysis": "根据信息安规规定，报废终端设备、员工离岗离职时留下的终端设备应交由相关单位（部门）处理。",
+    "mnemonic": "选B：错误（14.1.0）",
+    "explanation": "根据信息安规规定，报废终端设备、员工离岗离职时留下的终端设备应交由相关单位（部门）处理。（依据：14.1.0）"
+  },
+  {
+    "id": 194,
+    "type": "判断题",
+    "stem": "根据信息安规规定，不应泄露、篡改、恶意损毁用户信息。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "4.3.8",
+    "analysis": "",
+    "mnemonic": "选A：正确（4.3.8）",
+    "explanation": "正确。根据信息安规规定，不应泄露、篡改、恶意损毁用户信息。。"
+  },
+  {
+    "id": 195,
+    "type": "判断题",
+    "stem": "根据信息安规规定，不应约时开始或终结工作。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "5.3.6",
+    "analysis": "",
+    "mnemonic": "选A：正确（5.3.6）",
+    "explanation": "正确。根据信息安规规定，不应约时开始或终结工作。。"
+  },
+  {
+    "id": 196,
+    "type": "判断题",
+    "stem": "根据信息安规规定，电力通信专业和电力监控专业人员在信息场所从事各自专业工作，应执行信息专业的安全工作规程。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "编制说明6.0.0",
+    "analysis": "根据信息安规规定，考虑到信息、电力通信、电力监控专业互相在对方场所工作时是否需要同时执行多专业安全工作规程的问题，明确电力通信和电力监控专业人员在信息场所从事各自专业工作，不影响信息系统运行，可仅执行本专业（电力通信或电力监控）的安全工作规程。",
+    "mnemonic": "选B：错误（编制说明6.0.0）",
+    "explanation": "根据信息安规规定，考虑到信息、电力通信、电力监控专业互相在对方场所工作时是否需要同时执行多专业安全工作规程的问题，明确电力通信和电力监控专业人员在信息场所从事各自专业工作，不影响信息系统运行，可仅执行本专业（电力通信或电力监控）的安全工作规程。（依据：编制说明6.0.0）"
+  },
+  {
+    "id": 197,
+    "type": "判断题",
+    "stem": "根据信息安规规定，电子信息是指使用电子邮件、短信、即时通信等方式传递的数字化的文字、图像、音频、视频等信息。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "3.8.0",
+    "analysis": "",
+    "mnemonic": "选A：正确（3.8.0）",
+    "explanation": "正确。根据信息安规规定，电子信息是指使用电子邮件、短信、即时通信等方式传递的数字化的文字、图像、音频、视频等信息。。"
+  },
+  {
+    "id": 198,
+    "type": "判断题",
+    "stem": "根据信息安规规定，更换网络设备或安全设备的热插拔部件、内部板卡等配件时，应做好防静电措施。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "8.1.0",
+    "analysis": "",
+    "mnemonic": "选A：正确（8.1.0）",
+    "explanation": "正确。根据信息安规规定，更换网络设备或安全设备的热插拔部件、内部板卡等配件时，应做好防静电措施。。"
+  },
+  {
+    "id": 199,
+    "type": "判断题",
+    "stem": "根据信息安规规定，更换主机设备或存储设备的热插拔部件时，应做好防静电措施。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "9.1.0",
+    "analysis": "",
+    "mnemonic": "选A：正确（9.1.0）",
+    "explanation": "正确。根据信息安规规定，更换主机设备或存储设备的热插拔部件时，应做好防静电措施。。"
+  },
+  {
+    "id": 200,
+    "type": "判断题",
+    "stem": "根据信息安规规定，工作票采用手工填写时，应使用黑色或蓝色的钢（水）笔或圆珠笔填写与签发。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "5.2.4 b)",
+    "analysis": "",
+    "mnemonic": "选A：正确（5.2.4 b)）",
+    "explanation": "正确。根据信息安规规定，工作票采用手工填写时，应使用黑色或蓝色的钢（水）笔或圆珠笔填写与签发。。"
+  },
+  {
+    "id": 201,
+    "type": "判断题",
+    "stem": "根据信息安规规定，工作票的有效期，以批准的时间为限。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "5.2.6 a)",
+    "analysis": "",
+    "mnemonic": "选A：正确（5.2.6 a)）",
+    "explanation": "正确。根据信息安规规定，工作票的有效期，以批准的时间为限。。"
+  },
+  {
+    "id": 202,
+    "type": "判断题",
+    "stem": "根据信息安规规定，工作票的有效期，以实际工作时间为限。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "5.2.6 a)",
+    "analysis": "根据信息安规规定，工作票的有效期，以批准时间为限。",
+    "mnemonic": "选B：错误（5.2.6 a)）",
+    "explanation": "根据信息安规规定，工作票的有效期，以批准时间为限。（依据：5.2.6 a)）"
+  },
+  {
+    "id": 203,
+    "type": "判断题",
+    "stem": "根据信息安规规定，工作票由工作票负责人审核、签名后方可执行。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "5.2.4 d)",
+    "analysis": "根据信息安规规定，工作票由工作票签发人审核、签名后方可执行。",
+    "mnemonic": "选B：错误（5.2.4 d)）\n（口诀：签发审票批·许可现场启·负责人带队监护·三者不兼任）",
+    "explanation": "根据信息安规规定，工作票由工作票签发人审核、签名后方可执行。（依据：5.2.4 d)）"
+  },
+  {
+    "id": 204,
+    "type": "判断题",
+    "stem": "根据信息安规规定，工作票有污损不能继续使用时，应办理新的工作票。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "5.2.5 d)",
+    "analysis": "",
+    "mnemonic": "选A：正确（5.2.5 d)）",
+    "explanation": "正确。根据信息安规规定，工作票有污损不能继续使用时，应办理新的工作票。。"
+  },
+  {
+    "id": 205,
+    "type": "判断题",
+    "stem": "根据信息安规规定，工作前，作业人员应进行身份鉴别或授权。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "6.2.1",
+    "analysis": "根据信息安规规定，工作前，作业人员应进行身份鉴别和授权。",
+    "mnemonic": "选B：错误（6.2.1）",
+    "explanation": "根据信息安规规定，工作前，作业人员应进行身份鉴别和授权。（依据：6.2.1）"
+  },
+  {
+    "id": 206,
+    "type": "判断题",
+    "stem": "根据信息安规规定，工作许可人的安全职责包括确认工作票上所填安全措施是否正确完备。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "5.2.8 c)",
+    "analysis": "根据信息安规规定，工作签发人的安全职责包括确认工作票上所填安全措施是否正确完备。",
+    "mnemonic": "选B：错误（5.2.8 c)）\n（口诀：签发审票批·许可现场启·负责人带队监护·三者不兼任）",
+    "explanation": "根据信息安规规定，工作签发人的安全职责包括确认工作票上所填安全措施是否正确完备。（依据：5.2.8 c)）"
+  },
+  {
+    "id": 207,
+    "type": "判断题",
+    "stem": "根据信息安规规定，工作许可人应在确认工作票所列的安全措施全部完成后，方可发出许可工作的命令。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "5.3.1",
+    "analysis": "",
+    "mnemonic": "选A：正确（5.3.1）\n（口诀：签发审票批·许可现场启·负责人带队监护·三者不兼任）",
+    "explanation": "正确。根据信息安规规定，工作许可人应在确认工作票所列的安全措施全部完成后，方可发出许可工作的命令。。"
+  },
+  {
+    "id": 208,
+    "type": "判断题",
+    "stem": "根据信息安规规定，工作许可人在向工作负责人发出许可工作的命令前，应记录工作班名称、工作负责人姓名、工作地点和工作任务。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "5.3.2",
+    "analysis": "",
+    "mnemonic": "选A：正确（5.3.2）\n（口诀：签发审票批·许可现场启·负责人带队监护·三者不兼任）",
+    "explanation": "正确。根据信息安规规定，工作许可人在向工作负责人发出许可工作的命令前，应记录工作班名称、工作负责人姓名、工作地点和工作任务。。"
+  },
+  {
+    "id": 209,
+    "type": "判断题",
+    "stem": "根据信息安规规定，工作终结当面报告中，工作许可人和工作负责人应在信息工作票上记录终结时间，并分别签名。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "5.4.3 a)",
+    "analysis": "",
+    "mnemonic": "选A：正确（5.4.3 a)）\n（口诀：签发审票批·许可现场启·负责人带队监护·三者不兼任）",
+    "explanation": "正确。根据信息安规规定，工作终结当面报告中，工作许可人和工作负责人应在信息工作票上记录终结时间，并分别签名。。"
+  },
+  {
+    "id": 210,
+    "type": "判断题",
+    "stem": "根据信息安规规定，管理信息区、互联网区业务系统使用无线网络传输业务信息时，应具备接入认证、加密等安全机制；接入管理信息区时，应使用国家电网公司认可的承载通道、接入认证、隔离、加密等安全措施。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "4.3.15",
+    "analysis": "",
+    "mnemonic": "选A：正确（4.3.15）",
+    "explanation": "正确。根据信息安规规定，管理信息区、互联网区业务系统使用无线网络传输业务信息时，应具备接入认证、加密等安全机制；接入管理信息区时，应使用国家电网公司认可的承载通道、接入认证、隔离、加密等安全措施。。"
+  },
+  {
+    "id": 211,
+    "type": "判断题",
+    "stem": "根据信息安规规定，管理信息系统应满足相应的网络安全等级保护技术要求。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "2.0.0",
+    "analysis": "",
+    "mnemonic": "选A：正确（2.0.0）",
+    "explanation": "正确。根据信息安规规定，管理信息系统应满足相应的网络安全等级保护技术要求。。"
+  },
+  {
+    "id": 212,
+    "type": "判断题",
+    "stem": "根据信息安规规定，机房及相关设施的接地电阻、过电压保护性能，应符合有关标准、规范的要求。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "4.2.4",
+    "analysis": "",
+    "mnemonic": "选A：正确（4.2.4）",
+    "explanation": "正确。根据信息安规规定，机房及相关设施的接地电阻、过电压保护性能，应符合有关标准、规范的要求。。"
+  },
+  {
+    "id": 213,
+    "type": "判断题",
+    "stem": "根据信息安规规定，机房及相关设施宜配备防盗、防小动物等隔离设施。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "4.2.5",
+    "analysis": "根据信息安规规定，机房及相关设施宜配备防盗、防小动物等安全设施。",
+    "mnemonic": "选B：错误（4.2.5）",
+    "explanation": "根据信息安规规定，机房及相关设施宜配备防盗、防小动物等安全设施。（依据：4.2.5）"
+  },
+  {
+    "id": 214,
+    "type": "判断题",
+    "stem": "根据信息安规规定，检修工作如需关闭网络设备、安全设备，应确认所承载的业务可停用或已转移。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "6.4.3",
+    "analysis": "",
+    "mnemonic": "选A：正确（6.4.3）",
+    "explanation": "正确。根据信息安规规定，检修工作如需关闭网络设备、安全设备，应确认所承载的业务可停用或已转移。。"
+  },
+  {
+    "id": 215,
+    "type": "判断题",
+    "stem": "根据信息安规规定，检修工作如需关闭主机设备、存储设备，应确认所承载的数据库、中间件、业务系统可停运或已转移。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "6.4.4",
+    "analysis": "",
+    "mnemonic": "选A：正确（6.4.4）",
+    "explanation": "正确。根据信息安规规定，检修工作如需关闭主机设备、存储设备，应确认所承载的数据库、中间件、业务系统可停运或已转移。。"
+  },
+  {
+    "id": 216,
+    "type": "判断题",
+    "stem": "根据信息安规规定，检修工作完成后应收回临时授权。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "4.3.5",
+    "analysis": "",
+    "mnemonic": "选A：正确（4.3.5）",
+    "explanation": "正确。根据信息安规规定，检修工作完成后应收回临时授权。。"
+  },
+  {
+    "id": 217,
+    "type": "判断题",
+    "stem": "根据信息安规规定，检修前，应检查检修对象及受影响对象的运行状态，并核对运行方式与检修方案是否一致。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "6.4.1",
+    "analysis": "",
+    "mnemonic": "选A：正确（6.4.1）",
+    "explanation": "正确。根据信息安规规定，检修前，应检查检修对象及受影响对象的运行状态，并核对运行方式与检修方案是否一致。。"
+  },
+  {
+    "id": 218,
+    "type": "判断题",
+    "stem": "根据信息安规规定，检修宜通过具备运维审计功能的设备开展。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "4.3.3",
+    "analysis": "",
+    "mnemonic": "选A：正确（4.3.3）",
+    "explanation": "正确。根据信息安规规定，检修宜通过具备运维审计功能的设备开展。。"
+  },
+  {
+    "id": 219,
+    "type": "判断题",
+    "stem": "根据信息安规规定，接入管理信息区时，应使用国家电网公司认可的承载通道、接入认证、隔离、加密等安全措施。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "4.3.15",
+    "analysis": "",
+    "mnemonic": "选A：正确（4.3.15）",
+    "explanation": "正确。根据信息安规规定，接入管理信息区时，应使用国家电网公司认可的承载通道、接入认证、隔离、加密等安全措施。。"
+  },
+  {
+    "id": 220,
+    "type": "判断题",
+    "stem": "根据信息安规规定，进行数据库操作时，不应使用可能导致数据库报错的工具及代码。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "10.2.0",
+    "analysis": "根据信息安规规定，进行数据库操作时，不应使用可能导致数据库宕机的工具及代码。",
+    "mnemonic": "选B：错误（10.2.0）",
+    "explanation": "根据信息安规规定，进行数据库操作时，不应使用可能导致数据库宕机的工具及代码。（依据：10.2.0）"
+  },
+  {
+    "id": 221,
+    "type": "判断题",
+    "stem": "根据信息安规规定，禁止从任何公共网络直接接入管理信息区网络。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "4.3.14",
+    "analysis": "",
+    "mnemonic": "选A：正确（4.3.14）",
+    "explanation": "正确。根据信息安规规定，禁止从任何公共网络直接接入管理信息区网络。。"
+  },
+  {
+    "id": 222,
+    "type": "判断题",
+    "stem": "根据信息安规规定，经信息运维部门批准，系统维护工作可以通过互联网等公共网络实施。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "4.3.14",
+    "analysis": "根据信息安规规定，经信息运维部门批准，系统维护工作禁止通过互联网等公共网络实施。",
+    "mnemonic": "选B：错误（4.3.14）",
+    "explanation": "根据信息安规规定，经信息运维部门批准，系统维护工作禁止通过互联网等公共网络实施。（依据：4.3.14）"
+  },
+  {
+    "id": 223,
+    "type": "判断题",
+    "stem": "根据信息安规规定，目前具备通信卡功能的终端仅限于现场采集终端设备。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "编制说明6.0.0",
+    "analysis": "目前具备通信卡功能的终端不仅限于现场采集终端设备，",
+    "mnemonic": "选B：错误（编制说明6.0.0）",
+    "explanation": "目前具备通信卡功能的终端不仅限于现场采集终端设备，（依据：编制说明6.0.0）"
+  },
+  {
+    "id": 224,
+    "type": "判断题",
+    "stem": "根据信息安规规定，确认工作票所列的安全措施已实施是工作负责人的职责。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "5.2.8 c)",
+    "analysis": "根据信息安规规定，确认工作票所列的安全措施已实施是工作许可人的职责。",
+    "mnemonic": "选B：错误（5.2.8 c)）\n（口诀：签发审票批·许可现场启·负责人带队监护·三者不兼任）",
+    "explanation": "根据信息安规规定，确认工作票所列的安全措施已实施是工作许可人的职责。（依据：5.2.8 c)）"
+  },
+  {
+    "id": 225,
+    "type": "判断题",
+    "stem": "根据信息安规规定，若需变更或增设安全措施者，应由工作负责人征得工作票签发人和工作许可人同意，并在工作票上增填工作项目。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "5.2.5 c)",
+    "analysis": "根据信息安规规定，若需变更或增设安全措施者，应办理新的工作票。",
+    "mnemonic": "选B：错误（5.2.5 c)）\n（口诀：签发审票批·许可现场启·负责人带队监护·三者不兼任）",
+    "explanation": "根据信息安规规定，若需变更或增设安全措施者，应办理新的工作票。（依据：5.2.5 c)）"
+  },
+  {
+    "id": 226,
+    "type": "判断题",
+    "stem": "根据信息安规规定，设备、业务系统接入管理信息区、互联网区应经信息通信调度部门批准，并严格遵守国家电网公司网络准入要求。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "4.3.11",
+    "analysis": "根据信息安规规定，设备、业务系统接入管理信息区、互联网区应经信息运维单位（部门）批准，并严格遵守国家电网公司网络准入要求。",
+    "mnemonic": "选B：错误（4.3.11）",
+    "explanation": "根据信息安规规定，设备、业务系统接入管理信息区、互联网区应经信息运维单位（部门）批准，并严格遵守国家电网公司网络准入要求。（依据：4.3.11）"
+  },
+  {
+    "id": 227,
+    "type": "判断题",
+    "stem": "根据信息安规规定，升级操作系统、数据库、中间件、云平台组件版本前，应确认其兼容性及对业务系统的影响。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "6.4.6",
+    "analysis": "",
+    "mnemonic": "选A：正确（6.4.6）",
+    "explanation": "正确。根据信息安规规定，升级操作系统、数据库、中间件、云平台组件版本前，应确认其兼容性及对业务系统的影响。。"
+  },
+  {
+    "id": 228,
+    "type": "判断题",
+    "stem": "根据信息安规规定，授权是指根据预先认可的安全策略，赋予主体可实施相应行为权限的过程。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "3.9.0",
+    "analysis": "",
+    "mnemonic": "选A：正确（3.9.0）",
+    "explanation": "正确。根据信息安规规定，授权是指根据预先认可的安全策略，赋予主体可实施相应行为权限的过程。。"
+  },
+  {
+    "id": 229,
+    "type": "判断题",
+    "stem": "根据信息安规规定，授权应基于权限最小化和权限分离的原则。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "6.2.2",
+    "analysis": "",
+    "mnemonic": "授权两原则：最小化+权限分离",
+    "explanation": "授权应基于权限最小化和权限分离原则。权限最大化与安全相悖，权限统一不符合职责分离要求，因此排除CD。"
+  },
+  {
+    "id": 230,
+    "type": "判断题",
+    "stem": "根据信息安规规定，书面记录指工单、工作记录、巡视记录等。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "5.2.3 a)",
+    "analysis": "",
+    "mnemonic": "选A：正确（5.2.3 a)）",
+    "explanation": "正确。根据信息安规规定，书面记录指工单、工作记录、巡视记录等。。"
+  },
+  {
+    "id": 231,
+    "type": "判断题",
+    "stem": "根据信息安规规定，数据库检修工作结束后，应验证相关的业务运行正常。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "10.3.0",
+    "analysis": "根据信息安规规定，数据库检修工作结束前，应验证相关的业务运行正常。",
+    "mnemonic": "选B：错误（10.3.0）",
+    "explanation": "根据信息安规规定，数据库检修工作结束前，应验证相关的业务运行正常。（依据：10.3.0）"
+  },
+  {
+    "id": 232,
+    "type": "判断题",
+    "stem": "根据信息安规规定，数据库检修前，应备份可能受影响的业务数据、配置文件、日志文件等。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "6.3.4",
+    "analysis": "",
+    "mnemonic": "数据库检修备份：数据+配置+日志",
+    "explanation": "数据库检修前应备份可能受影响的业务数据、配置文件和日志文件。运行参数属于运行态信息，不属于需要备份的数据范畴。"
+  },
+  {
+    "id": 233,
+    "type": "判断题",
+    "stem": "根据信息安规规定，数据库投运前，应按需配置访问数据库的MAC地址。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "10.1.0",
+    "analysis": "根据信息安规规定，数据库投运前，应按需配置访问数据库的IP地址。",
+    "mnemonic": "选B：错误（10.1.0）",
+    "explanation": "根据信息安规规定，数据库投运前，应按需配置访问数据库的IP地址。（依据：10.1.0）"
+  },
+  {
+    "id": 234,
+    "type": "判断题",
+    "stem": "根据信息安规规定，提供网络服务或扩大网络边界应经业务主管部门（业务归口管理部门）批准。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "4.3.13",
+    "analysis": "根据信息安规规定，提供网络服务或扩大网络边界应经信息运维部门（单位）批准。",
+    "mnemonic": "选B：错误（4.3.13）",
+    "explanation": "根据信息安规规定，提供网络服务或扩大网络边界应经信息运维部门（单位）批准。（依据：4.3.13）"
+  },
+  {
+    "id": 235,
+    "type": "判断题",
+    "stem": "根据信息安规规定，填用信息工作票的工作，工作负责人应得到工作许可人的许可，并确认工作票所列的安全措施全部完成后，方可开始工作。",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "5.3.5",
+    "analysis": "",
+    "mnemonic": "开工许可人，措施全到位\n（口诀：签发审票批·许可现场启·负责人带队监护·三者不兼任）",
+    "explanation": "填用工作票的工作，开工前必须经工作许可人许可。工作许可人确认安全措施已全部落实后，工作负责人方可组织开工。签发人负责签发票，监护人负责现场监督，班成员执行工作，都不是许可开工的角色。"
+  },
+  {
+    "id": 236,
+    "type": "判断题",
+    "stem": "根据信息安规规定，网络设备或安全设备检修工作结束前，应验证设备及所承载的业务运行正常，配置文件符合要求。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "8.2.0",
+    "analysis": "根据信息安规规定，网络设备或安全设备检修工作结束前，应验证设备运行正常，所承载的业务运行正常，配置策略符合要求。",
+    "mnemonic": "检修结束前验证业务正常",
+    "explanation": "根据信息安规规定，网络设备或安全设备检修工作结束前，应验证设备运行正常，所承载的业务运行正常，配置策略符合要求。（依据：8.2.0）"
+  },
+  {
+    "id": 237,
+    "type": "判断题",
+    "stem": "根据信息安规规定，现场使用的工器具、调试计算机（或其他专用设备）、外接存储设备、软件工具等应符合有关安全要求。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "4.2.2",
+    "analysis": "",
+    "mnemonic": "选A：正确（4.2.2）",
+    "explanation": "正确。根据信息安规规定，现场使用的工器具、调试计算机（或其他专用设备）、外接存储设备、软件工具等应符合有关安全要求。。"
+  },
+  {
+    "id": 238,
+    "type": "判断题",
+    "stem": "根据信息安规规定，卸载或禁用计算机防病毒、桌面管理等安全防护软件，以及拆卸、更换终端设备软件，应经信息运维单位（部门）批准。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "14.6.0",
+    "analysis": "",
+    "mnemonic": "选A：正确（14.6.0）",
+    "explanation": "正确。根据信息安规规定，卸载或禁用计算机防病毒、桌面管理等安全防护软件，以及拆卸、更换终端设备软件，应经信息运维单位（部门）批准。。"
+  },
+  {
+    "id": 239,
+    "type": "判断题",
+    "stem": "根据信息安规规定，新参加工作的人员、实习人员和临时参加工作的人员（管理人员、非全日制用工等）应经过信息安全知识教育后，方可参加工作。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "4.1.5",
+    "analysis": "根据信息安规规定，新参加工作的人员、实习人员和临时参加工作的人员（管理人员、非全日制用工等）应经过信息安全知识教育后，方可参加指定的工作，且不应单独工作。",
+    "mnemonic": "选B：错误（4.1.5）",
+    "explanation": "根据信息安规规定，新参加工作的人员、实习人员和临时参加工作的人员（管理人员、非全日制用工等）应经过信息安全知识教育后，方可参加指定的工作，且不应单独工作。（依据：4.1.5）"
+  },
+  {
+    "id": 240,
+    "type": "判断题",
+    "stem": "根据信息安规规定，信息工作票一份由工作负责人收执，另一份由工作票签发人收执。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "5.2.4 e)",
+    "analysis": "根据信息安规规定，信息工作票一份由工作负责人收执，另一份由工作许可人收执，工作期间，工作负责人应始终持有工作票。",
+    "mnemonic": "选B：错误（5.2.4 e)）\n（口诀：签发审票批·许可现场启·负责人带队监护·三者不兼任）",
+    "explanation": "根据信息安规规定，信息工作票一份由工作负责人收执，另一份由工作许可人收执，工作期间，工作负责人应始终持有工作票。（依据：5.2.4 e)）"
+  },
+  {
+    "id": 241,
+    "type": "判断题",
+    "stem": "根据信息安规规定，信息工作票由工作负责人、工作许可人分别收执。工作期间，工作负责人无需始终持有工作票。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "5.2.4(e)",
+    "analysis": "根据信息安规规定，信息工作票由工作负责人、工作许可人分别收执。工作期间，工作负责人应始终持有工作票。",
+    "mnemonic": "选B：错误（5.2.4(e)）\n（口诀：签发审票批·许可现场启·负责人带队监护·三者不兼任）",
+    "explanation": "根据信息安规规定，信息工作票由工作负责人、工作许可人分别收执。工作期间，工作负责人应始终持有工作票。（依据：5.2.4(e)）"
+  },
+  {
+    "id": 242,
+    "type": "判断题",
+    "stem": "根据信息安规规定，信息设备变更用途或下线，宜擦除或销毁其中数据。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "4.3.10",
+    "analysis": "根据信息安规规定，信息设备变更用途或下线，应擦除或销毁其中数据。",
+    "mnemonic": "选B：错误（4.3.10）",
+    "explanation": "根据信息安规规定，信息设备变更用途或下线，应擦除或销毁其中数据。（依据：4.3.10）"
+  },
+  {
+    "id": 243,
+    "type": "判断题",
+    "stem": "根据信息安规规定，信息设备变更用途或下线，应擦除或销毁其中数据。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "4.3.10",
+    "analysis": "",
+    "mnemonic": "选A：正确（4.3.10）",
+    "explanation": "正确。根据信息安规规定，信息设备变更用途或下线，应擦除或销毁其中数据。。"
+  },
+  {
+    "id": 244,
+    "type": "判断题",
+    "stem": "根据信息安规规定，信息系统的过期账号及其权限应及时注销、冻结或调整。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "4.3.4",
+    "analysis": "",
+    "mnemonic": "选A：正确（4.3.4）",
+    "explanation": "正确。根据信息安规规定，信息系统的过期账号及其权限应及时注销、冻结或调整。。"
+  },
+  {
+    "id": 245,
+    "type": "判断题",
+    "stem": "根据信息安规规定，信息系统的配置、业务数据等宜定期备份，备份的数据应定期进行验证。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "7.4.0",
+    "analysis": "根据信息安规规定，信息系统的配置、业务数据等应定期备份，备份的数据宜定期进行验证。",
+    "mnemonic": "选B：错误（7.4.0）",
+    "explanation": "根据信息安规规定，信息系统的配置、业务数据等应定期备份，备份的数据宜定期进行验证。（依据：7.4.0）"
+  },
+  {
+    "id": 246,
+    "type": "判断题",
+    "stem": "根据信息安规规定，信息系统的账号、权限应按需分配、权责匹配、最小化授权。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "7.5.0",
+    "analysis": "",
+    "mnemonic": "选A：正确（7.5.0）",
+    "explanation": "正确。根据信息安规规定，信息系统的账号、权限应按需分配、权责匹配、最小化授权。。"
+  },
+  {
+    "id": 247,
+    "type": "判断题",
+    "stem": "根据信息安规规定，信息系统故障紧急抢修时，工作票可不经工作票签发人同意。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "5.2.5 e)",
+    "analysis": "根据信息安规规定，信息系统故障紧急抢修时，工作票可不经工作票签发人书面签发，但应经工作票签发人同意，并在工作票备注栏中注明。",
+    "mnemonic": "紧急抢修免签发，备注栏里要注明\n（口诀：签发审票批·许可现场启·负责人带队监护·三者不兼任）",
+    "explanation": "根据信息安规规定，信息系统故障紧急抢修时，工作票可不经工作票签发人书面签发，但应经工作票签发人同意，并在工作票备注栏中注明。（依据：5.2.5 e)）"
+  },
+  {
+    "id": 248,
+    "type": "判断题",
+    "stem": "根据信息安规规定，信息系统是指由计算机及相关配套设备、设施构成的，按照一定的应用目标和规则对信息进行采集、加工、存储、传输、检索处理的，为电力生产、经营、管理业务提供支持的保障系统。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "3.1.0",
+    "analysis": "",
+    "mnemonic": "选A：正确（3.1.0）",
+    "explanation": "正确。根据信息安规规定，信息系统是指由计算机及相关配套设备、设施构成的，按照一定的应用目标和规则对信息进行采集、加工、存储、传输、检索处理的，为电力生产、经营、管理业务提供支持的保障系统。。"
+  },
+  {
+    "id": 249,
+    "type": "判断题",
+    "stem": "根据信息安规规定，信息系统远程检修宜使用运维专机，并使用加密或公用的传输协议，且宜通过具备运维审计功能的设备开展。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "4.3.3",
+    "analysis": "根据信息安规规定，信息系统远程检修应使用运维专机，并使用加密或专用的传输协议，且宜通过具备运维审计功能的设备开展。",
+    "mnemonic": "选B：错误（4.3.3）",
+    "explanation": "根据信息安规规定，信息系统远程检修应使用运维专机，并使用加密或专用的传输协议，且宜通过具备运维审计功能的设备开展。（依据：4.3.3）"
+  },
+  {
+    "id": 250,
+    "type": "判断题",
+    "stem": "根据信息安规规定，信息系统远程检修宜使用运维专机，并使用加密或专用的传输协议。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "4.3.3",
+    "analysis": "根据信息安规规定，信息系统远程检修应使用运维专机，并使用加密或专用的传输协议，且宜通过具备运维审计功能的设备开展。",
+    "mnemonic": "选B：错误（4.3.3）",
+    "explanation": "根据信息安规规定，信息系统远程检修应使用运维专机，并使用加密或专用的传输协议，且宜通过具备运维审计功能的设备开展。（依据：4.3.3）"
+  },
+  {
+    "id": 251,
+    "type": "判断题",
+    "stem": "根据信息安规规定，信息系统运行是指信息系统运行维护、巡视检查、异常事件应急处置、缺陷管理、设备及台帐管理、权限及口令管理、运行统计分析和安全保障等工作。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "3.2.0",
+    "analysis": "信息系统运行是指信息系统运行监控、巡视检查、安全漏洞扫描、异常事件应急处置、缺陷管理、资源及台账管理、权限及口令管理、运行统计分析和安全保障等工作。",
+    "mnemonic": "信息系统运行含安全保障",
+    "explanation": "信息系统运行是指信息系统运行监控、巡视检查、安全漏洞扫描、异常事件应急处置、缺陷管理、资源及台账管理、权限及口令管理、运行统计分析和安全保障等工作。（依据：3.2.0）"
+  },
+  {
+    "id": 252,
+    "type": "判断题",
+    "stem": "根据信息安规规定，信息作业现场的生产条件和安全设施等应符合有关标准、规范的要求。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "4.2.1",
+    "analysis": "",
+    "mnemonic": "选A：正确（4.2.1）",
+    "explanation": "正确。根据信息安规规定，信息作业现场的生产条件和安全设施等应符合有关标准、规范的要求。。"
+  },
+  {
+    "id": 253,
+    "type": "判断题",
+    "stem": "根据信息安规规定，需停电更换主机设备或存储设备的内部板卡等配件的工作，应断开外部电源连接线，无需做好防静电措施。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "9.1.0",
+    "analysis": "根据信息安规规定，需停电更换主机设备或存储设备的内部板卡等配件的工作，应断开外部电源连接线，需做好防静电措施。",
+    "mnemonic": "选B：错误（9.1.0）",
+    "explanation": "根据信息安规规定，需停电更换主机设备或存储设备的内部板卡等配件的工作，应断开外部电源连接线，需做好防静电措施。（依据：9.1.0）"
+  },
+  {
+    "id": 254,
+    "type": "判断题",
+    "stem": "根据信息安规规定，需要变更工作班成员时，新的作业人员经过安全交底、签名确认后方可参与工作。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "5.2.5 b)",
+    "analysis": "根据信息安规规定，需要变更工作班成员时，应经工作负责人同意并记录在工作票备注栏中。新的作业人员经过安全交底、签名确认后方可参与工作。",
+    "mnemonic": "变成员找负责人，备注栏里要记录",
+    "explanation": "根据信息安规规定，需要变更工作班成员时，应经工作负责人同意并记录在工作票备注栏中。新的作业人员经过安全交底、签名确认后方可参与工作。（依据：5.2.5 b)）"
+  },
+  {
+    "id": 255,
+    "type": "判断题",
+    "stem": "根据信息安规规定，蓄电池组接入电源前，应确认蓄电池组正负极性与逆变器直流输出正负极性对应。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "13.3.3",
+    "analysis": "根据信息安规规定，蓄电池组接入电源前，应确认蓄电池组正负极性与整流器直流输出正负极性对应。",
+    "mnemonic": "选B：错误（13.3.3）",
+    "explanation": "根据信息安规规定，蓄电池组接入电源前，应确认蓄电池组正负极性与整流器直流输出正负极性对应。（依据：13.3.3）"
+  },
+  {
+    "id": 256,
+    "type": "判断题",
+    "stem": "根据信息安规规定，巡视时发现异常问题，应及时报告信息运维单位（部门）；紧急情况的处理，应获得信息运维单位（部门）批准。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "7.1 b)",
+    "analysis": "根据信息安规规定，巡视时发现异常问题，应及时报告信息运维单位（部门）；如遇紧急情况应根据相关要求启动故障紧急抢修；非紧急情况的处理，应获得信息运维单位（部门）批准。",
+    "mnemonic": "选B：错误（7.1 b)）",
+    "explanation": "根据信息安规规定，巡视时发现异常问题，应及时报告信息运维单位（部门）；如遇紧急情况应根据相关要求启动故障紧急抢修；非紧急情况的处理，应获得信息运维单位（部门）批准。（依据：7.1 b)）"
+  },
+  {
+    "id": 257,
+    "type": "判断题",
+    "stem": "根据信息安规规定，巡视时可以改变信息系统和机房动力环境设备的运行状态。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "7.1 a)",
+    "analysis": "根据信息安规规定，巡视时不应改变信息系统和机房动力环境设备的运行状态。",
+    "mnemonic": "选B：错误（7.1 a)）",
+    "explanation": "根据信息安规规定，巡视时不应改变信息系统和机房动力环境设备的运行状态。（依据：7.1 a)）"
+  },
+  {
+    "id": 258,
+    "type": "判断题",
+    "stem": "根据信息安规规定，验证应基于权限最小化和权限分离的原则。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "6.2.2",
+    "analysis": "根据信息安规规定，授权应基于权限最小化和权限分离的原则。",
+    "mnemonic": "选B：错误（6.2.2）",
+    "explanation": "根据信息安规规定，授权应基于权限最小化和权限分离的原则。（依据：6.2.2）"
+  },
+  {
+    "id": 259,
+    "type": "判断题",
+    "stem": "根据信息安规规定，业务数据的导入导出应经过信息运维部门批准，导出后的数据应及时销毁。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "4.3.7",
+    "analysis": "根据信息安规规定，业务数据的导入导出应经过业务主管部门（业务归口管理部门）批准，导出后的数据应妥善保管。",
+    "mnemonic": "选B：错误（4.3.7）",
+    "explanation": "根据信息安规规定，业务数据的导入导出应经过业务主管部门（业务归口管理部门）批准，导出后的数据应妥善保管。（依据：4.3.7）"
+  },
+  {
+    "id": 260,
+    "type": "判断题",
+    "stem": "根据信息安规规定，业务数据的导入导出应经过业务主管部门（业务归口管理部门）批准，导出后的数据应及时销毁。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "4.3.7",
+    "analysis": "根据信息安规规定，业务数据的导入导出应经过业务主管部门（业务归口管理部门）批准，导出后的数据应妥善保管。",
+    "mnemonic": "选B：错误（4.3.7）",
+    "explanation": "根据信息安规规定，业务数据的导入导出应经过业务主管部门（业务归口管理部门）批准，导出后的数据应妥善保管。（依据：4.3.7）"
+  },
+  {
+    "id": 261,
+    "type": "判断题",
+    "stem": "根据信息安规规定，业务系统版本升级后，应验证业务系统运行正常，并保留旧版本的文件。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "12.1.0",
+    "analysis": "根据信息安规规定，业务系统版本升级后，应验证业务系统运行正常，并清除旧版本的文件。",
+    "mnemonic": "选B：错误（12.1.0）",
+    "explanation": "根据信息安规规定，业务系统版本升级后，应验证业务系统运行正常，并清除旧版本的文件。（依据：12.1.0）"
+  },
+  {
+    "id": 262,
+    "type": "判断题",
+    "stem": "根据信息安规规定，业务系统检修工作中，应备份可能受到影响的配置文件、业务数据、运行参数和日志文件等。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "6.3.1",
+    "analysis": "根据信息安规规定，业务系统检修工作开始前，应备份可能受到影响的配置文件、业务数据、运行参数和日志文件等。",
+    "mnemonic": "选B：错误（6.3.1）",
+    "explanation": "根据信息安规规定，业务系统检修工作开始前，应备份可能受到影响的配置文件、业务数据、运行参数和日志文件等。（依据：6.3.1）"
+  },
+  {
+    "id": 263,
+    "type": "判断题",
+    "stem": "根据信息安规规定，业务系统上线前，应删除测试账号、测试数据，并修改系统账号默认口令。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "4.3.6",
+    "analysis": "根据信息安规规定，业务系统上线前，应在具有资质的测试机构进行安全测试，并取得检测合格报告，应删除临时账号、临时数据，并修改系统账号默认口令。",
+    "mnemonic": "选B：错误（4.3.6）",
+    "explanation": "根据信息安规规定，业务系统上线前，应在具有资质的测试机构进行安全测试，并取得检测合格报告，应删除临时账号、临时数据，并修改系统账号默认口令。（依据：4.3.6）"
+  },
+  {
+    "id": 264,
+    "type": "判断题",
+    "stem": "根据信息安规规定，业务系统上线前，应在国网的测试机构进行安全测试，并取得检测合格报告。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "4.3.6",
+    "analysis": "根据信息安规规定，业务系统上线前，应在具有资质的测试机构进行安全测试，并取得检测合格报告。",
+    "mnemonic": "选B：错误（4.3.6）",
+    "explanation": "根据信息安规规定，业务系统上线前，应在具有资质的测试机构进行安全测试，并取得检测合格报告。（依据：4.3.6）"
+  },
+  {
+    "id": 265,
+    "type": "判断题",
+    "stem": "根据信息安规规定，业务系统下线后，所有业务数据应妥善保存或销毁。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "12.2.0",
+    "analysis": "",
+    "mnemonic": "选A：正确（12.2.0）",
+    "explanation": "正确。根据信息安规规定，业务系统下线后，所有业务数据应妥善保存或销毁。。"
+  },
+  {
+    "id": 266,
+    "type": "判断题",
+    "stem": "根据信息安规规定，业务系统在具有资质的测试机构进行安全测试后即可上线。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "4.3.6",
+    "analysis": "根据信息安规规定，业务系统上线前，应在具有资质的测试机构进行安全测试，并取得检测合格报告，应删除临时账号、临时数据，并修改系统账号默认口令。",
+    "mnemonic": "选B：错误（4.3.6）",
+    "explanation": "根据信息安规规定，业务系统上线前，应在具有资质的测试机构进行安全测试，并取得检测合格报告，应删除临时账号、临时数据，并修改系统账号默认口令。（依据：4.3.6）"
+  },
+  {
+    "id": 267,
+    "type": "判断题",
+    "stem": "根据信息安规规定，一个工作负责人可以同时执行多张信息工作票。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "5.2.5 a)",
+    "analysis": "根据信息安规规定，一个工作负责人不能同时执行多张信息工作票。",
+    "mnemonic": "选B：错误（5.2.5 a)）\n（口诀：签发审票批·许可现场启·负责人带队监护·三者不兼任）",
+    "explanation": "根据信息安规规定，一个工作负责人不能同时执行多张信息工作票。（依据：5.2.5 a)）"
+  },
+  {
+    "id": 268,
+    "type": "判断题",
+    "stem": "根据信息安规规定，一张信息工作票中，工作许可人与工作负责人可以互相兼任。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "5.2.4 f)",
+    "analysis": "根据信息安规规定，一张信息工作票中，工作许可人与工作负责人不得互相兼任。",
+    "mnemonic": "选B：错误（5.2.4 f)）\n（口诀：签发审票批·许可现场启·负责人带队监护·三者不兼任）",
+    "explanation": "根据信息安规规定，一张信息工作票中，工作许可人与工作负责人不得互相兼任。（依据：5.2.4 f)）"
+  },
+  {
+    "id": 269,
+    "type": "判断题",
+    "stem": "根据信息安规规定，已执行的信息工作票至少应保存半年。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "5.2.5 f)",
+    "analysis": "根据信息安规规定，已执行的信息工作票至少应保存一年。",
+    "mnemonic": "选B：错误（5.2.5 f)）",
+    "explanation": "根据信息安规规定，已执行的信息工作票至少应保存一年。（依据：5.2.5 f)）"
+  },
+  {
+    "id": 270,
+    "type": "判断题",
+    "stem": "根据信息安规规定，影响其他设备正常运行的故障设备应及时停运。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "4.3.9",
+    "analysis": "根据信息安规规定，影响其他设备正常运行的故障设备应及时脱网（隔离）。",
+    "mnemonic": "选B：错误（4.3.9）",
+    "explanation": "根据信息安规规定，影响其他设备正常运行的故障设备应及时脱网（隔离）。（依据：4.3.9）"
+  },
+  {
+    "id": 271,
+    "type": "判断题",
+    "stem": "根据信息安规规定，云平台检修前，应备份可能受到影响的配置文件、业务数据、运行参数。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "6.3.6",
+    "analysis": "云平台检修前，应备份可能受到影响的配置文件、业务数据、运行参数和日志文件等。",
+    "mnemonic": "选B：错误（6.3.6）",
+    "explanation": "云平台检修前，应备份可能受到影响的配置文件、业务数据、运行参数和日志文件等。（依据：6.3.6）"
+  },
+  {
+    "id": 272,
+    "type": "判断题",
+    "stem": "根据信息安规规定，在变（配）电站、发电厂、电力线路等场所的信息工作，只遵守《国家电网公司电力安全工作规程》的信息部分。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "4.4.1",
+    "analysis": "根据信息安规规定，在变（配）电站、发电厂、电力线路等场所的信息工作，应同时遵守《国家电网公司电力安全工作规程》的变电、配电、线路等相应部分。",
+    "mnemonic": "选B：错误（4.4.1）",
+    "explanation": "根据信息安规规定，在变（配）电站、发电厂、电力线路等场所的信息工作，应同时遵守《国家电网公司电力安全工作规程》的变电、配电、线路等相应部分。（依据：4.4.1）"
+  },
+  {
+    "id": 273,
+    "type": "判断题",
+    "stem": "根据信息安规规定，在管理信息区终端设备上启用无线通信功能应经信息运维单位（部门）批准。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "14.7.0",
+    "analysis": "",
+    "mnemonic": "选A：正确（14.7.0）",
+    "explanation": "正确。根据信息安规规定，在管理信息区终端设备上启用无线通信功能应经信息运维单位（部门）批准。。"
+  },
+  {
+    "id": 274,
+    "type": "判断题",
+    "stem": "根据信息安规规定，在信息系统上，不需填用信息工作票工作，也可以使用其它书面记录、电子信息或按口头、电话命令执行。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "5.2.1 b)",
+    "analysis": "",
+    "mnemonic": "选A：正确（5.2.1 b)）",
+    "explanation": "正确。根据信息安规规定，在信息系统上，不需填用信息工作票工作，也可以使用其它书面记录、电子信息或按口头、电话命令执行。。"
+  },
+  {
+    "id": 275,
+    "type": "判断题",
+    "stem": "根据信息安规规定，在信息系统上工作的安全技术措施有授权、备份、鉴别、验证。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "6.1.0",
+    "analysis": "根据信息安规规定，在信息系统上工作的安全技术措施有授权、备份、验证。",
+    "mnemonic": "技术措施：授权备份验证（非认证）",
+    "explanation": "根据信息安规规定，在信息系统上工作的安全技术措施有授权、备份、验证。（依据：6.1.0）"
+  },
+  {
+    "id": 276,
+    "type": "判断题",
+    "stem": "根据信息安规规定，在原工作票的安全措施范围内增加工作任务时，应由工作负责人征得工作票签发人和工作许可人同意，并在工作票上增填工作项目。若需变更或增设安全措施者，应办理新的工作票。",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "5.2.5 c)",
+    "analysis": "",
+    "mnemonic": "增任务：负责人征得签发人+许可人\n（口诀：签发审票批·许可现场启·负责人带队监护·三者不兼任）",
+    "explanation": "在原工作票安全措施范围内增加任务，由工作负责人征得工作票签发人和工作许可人同意，并在票上增填工作项目。负责人是执行方，签发人确认措施覆盖，许可人确认现场安全。"
+  },
+  {
+    "id": 277,
+    "type": "判断题",
+    "stem": "根据信息安规规定，在原工作票的安全措施范围内增加工作任务时，应由工作负责人征得工作许可人同意，并在工作票上增填工作项目。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "5.2.5 c)",
+    "analysis": "根据信息安规规定，在原工作票的安全措施范围内增加工作任务时，应由工作负责人征得工作票签发人及工作许可人同意，并在工作票上增填工作项目。",
+    "mnemonic": "增任务：负责人征得签发人+许可人\n（口诀：签发审票批·许可现场启·负责人带队监护·三者不兼任）",
+    "explanation": "根据信息安规规定，在原工作票的安全措施范围内增加工作任务时，应由工作负责人征得工作票签发人及工作许可人同意，并在工作票上增填工作项目。（依据：5.2.5 c)）"
+  },
+  {
+    "id": 278,
+    "type": "判断题",
+    "stem": "根据信息安规规定，中间件检修工作结束后，应验证设备及所承载的业务运行正常。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "12.3.0",
+    "analysis": "根据信息安规规定，中间件检修工作结束前，应验证设备及所承载的业务运行正常。",
+    "mnemonic": "中间件检修结束验证业务",
+    "explanation": "根据信息安规规定，中间件检修工作结束前，应验证设备及所承载的业务运行正常。（依据：12.3.0）"
+  },
+  {
+    "id": 279,
+    "type": "判断题",
+    "stem": "根据信息安规规定，中间件检修前，应备份参数文件。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "6.3.5",
+    "analysis": "根据信息安规规定，中间件检修前，应备份配置文件。",
+    "mnemonic": "中间件检修前备份配置文件",
+    "explanation": "根据信息安规规定，中间件检修前，应备份配置文件。（依据：6.3.5）"
+  },
+  {
+    "id": 280,
+    "type": "判断题",
+    "stem": "根据信息安规规定，终端设备不应在管理信息区、互联网区之间交叉使用。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "14.2.0",
+    "analysis": "",
+    "mnemonic": "选A：正确（14.2.0）",
+    "explanation": "正确。根据信息安规规定，终端设备不应在管理信息区、互联网区之间交叉使用。。"
+  },
+  {
+    "id": 281,
+    "type": "判断题",
+    "stem": "根据信息安规规定，终端设备及外围设备交由外部单位维修处理及修复后重新入网应经信息运维单位（部门）批准。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "14.9.0",
+    "analysis": "",
+    "mnemonic": "外修重入网：信息运维单位批",
+    "explanation": "终端设备及外围设备交由外部单位维修后重新入网，应经信息运维单位（部门）批准。因为外部维修可能改变设备安全状态，需信息运维单位把关。"
+  },
+  {
+    "id": 282,
+    "type": "判断题",
+    "stem": "根据信息安规规定，主机设备或存储设备检修前，应备份业务数据。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "6.3.3",
+    "analysis": "根据信息安规规定，主机设备或存储设备检修前，应备份运行参数。",
+    "mnemonic": "主机存储检修前：按需备份运行参数",
+    "explanation": "根据信息安规规定，主机设备或存储设备检修前，应备份运行参数。（依据：6.3.3）"
+  },
+  {
+    "id": 283,
+    "type": "判断题",
+    "stem": "工作票签发人应由熟悉作业人员技术水平、熟悉相关信息系统情况、熟悉《国家电网公司电力安全工作规程第9部分：信息部分》，并具有相关工作经验的管理人员、技术人员或经信息运维单位批准的人员担任，名单应公布。检修单位的工作票签发人名单应事先送安监部备案。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "5.2.7 a)",
+    "analysis": "工作票签发人应由熟悉作业人员技术水平、熟悉相关信息系统情况、熟悉《国家电网公司电力安全工作规程第9部分：信息部分》，并具有相关工作经验的管理人员、技术人员或经信息运维单位批准的人员担任，名单应公布。检修单位的工作票签发人名单应事先送相关信息运维单位（部门）备案。",
+    "mnemonic": "选B：错误（5.2.7 a)）\n（口诀：签发审票批·许可现场启·负责人带队监护·三者不兼任）",
+    "explanation": "工作票签发人应由熟悉作业人员技术水平、熟悉相关信息系统情况、熟悉《国家电网公司电力安全工作规程第9部分：信息部分》，并具有相关工作经验的管理人员、技术人员或经信息运维单位批准的人员担任，名单应公布。检修单位的工作票签发人名单应事先送相关信息运维单位（部门）备案。（依据：5.2.7 a)）"
+  },
+  {
+    "id": 284,
+    "type": "判断题",
+    "stem": "工作许可人应由有一定工作经验、熟悉工作范围内信息系统情况、熟悉《国家电网公司电力安全工作规程第9部分：信息部分》，并经信息运维部门批准的人员担任，名单应公布。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "A",
+    "basis": "5.2.7 c)",
+    "analysis": "",
+    "mnemonic": "选A：正确（5.2.7 c)）\n（口诀：签发审票批·许可现场启·负责人带队监护·三者不兼任）",
+    "explanation": "正确。工作许可人应由有一定工作经验、熟悉工作范围内信息系统情况、熟悉《国家电网公司电力安全工作规程第9部分：信息部分》，并经信息运维部门批准的人员担任，名单应公布。。"
+  },
+  {
+    "id": 285,
+    "type": "判断题",
+    "stem": "作业人员对《国家电网公司电力安全工作规程第9部分：信息部分》应每年考试一次。因故间断信息工作连续六个月以上者，应重新学习《国家电网公司电力安全工作规程第9部分：信息部分》后，方可恢复工作。（ ）",
+    "options": [
+      {
+        "label": "A",
+        "text": "正确"
+      },
+      {
+        "label": "B",
+        "text": "错误"
+      }
+    ],
+    "answer": "B",
+    "basis": "4.1.3",
+    "analysis": "作业人员对《国家电网公司电力安全工作规程第9部分：信息部分》应每年考试一次。因故间断信息工作连续六个月以上者，应重新学习《国家电网公司电力安全工作规程第9部分：信息部分》后，并经考试合格后，方可恢复工作。",
+    "mnemonic": "选B：错误（4.1.3）",
+    "explanation": "作业人员对《国家电网公司电力安全工作规程第9部分：信息部分》应每年考试一次。因故间断信息工作连续六个月以上者，应重新学习《国家电网公司电力安全工作规程第9部分：信息部分》后，并经考试合格后，方可恢复工作。（依据：4.1.3）"
+  }
+]
+
+// ===== Wrong Question Storage =====
+function getWrongIds() { try { return JSON.parse(localStorage.getItem('wrongQuestions') || '[]'); } catch(e) { return []; } }
+function saveWrongIds(ids) { localStorage.setItem('wrongQuestions', JSON.stringify(ids)); }
+function addWrongId(id) { let ids = getWrongIds(); if (!ids.includes(id)) { ids.push(id); saveWrongIds(ids); } }
+function removeWrongId(id) { saveWrongIds(getWrongIds().filter(x => x !== id)); }
+function updateWrongBadge() {
+  const ids = getWrongIds(); const badge = document.getElementById('wrongBadge');
+  if (ids.length > 0) { badge.textContent = ids.length + ' 错题'; badge.classList.remove('hidden'); }
+  else { badge.classList.add('hidden'); }
+}
+
+// ===== State =====
+let examQuestions = [], examAnswers = {}, examIdx = 0, examTimer = null, examStartTime = 0;
+let examDuration = 20 * 60, practiceList = [], practiceIdx = 0, practiceAnswered = {};
+let currentFilter = 'all', practiceMode = 'practice', reviewIdx = 0;
+let practicePending = {}; // pending multi-select choices: qid -> 'ABC'
+
+// ===== Utility =====
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+function typeBadge(type) {
+  const m = {'单选题':'badge-single','多选题':'badge-multi','判断题':'badge-judge'};
+  const t = {'单选题':'单选','多选题':'多选','判断题':'判断'};
+  return '<span class="q-type-tag '+(m[type]||'')+'">'+(t[type]||type)+'</span>';
+}
+function formatStem(s) { return s.replace(/（\s*）/g,'<span class="blank">（　　）</span>').replace(/\(\s*\)/g,'<span class="blank">（　　）</span>'); }
+function formatAnswerDisplay(q, ans) {
+  if (q.type === '判断题') { return ans==='A'?'正确':ans==='B'?'错误':ans; }
+  return ans.split('').map(l => { const o=q.options.find(x=>x.label===l); return o?l+'. '+o.text:l; }).join('；');
+}
+function getExplanation(q) { return q.explanation || ('依据' + (q.basis||'')); }
+
+// ===== Home =====
+function goHome() {
+  clearInterval(examTimer);
+  document.querySelectorAll('#homePage,#examPage,#resultPage,#reviewPage,#practicePage').forEach(el=>el.classList.add('hidden'));
+  document.getElementById('homePage').classList.remove('hidden');
+  document.getElementById('backHome').classList.add('hidden');
+  updateWrongBadge();
+}
+
+// ===== Exam =====
+function startExam() {
+  const singles = shuffle(QUESTIONS.filter(q => q.type === '单选题'));
+  const multis = shuffle(QUESTIONS.filter(q => q.type === '多选题'));
+  const judges = shuffle(QUESTIONS.filter(q => q.type === '判断题'));
+  const targetSingles = 44, targetMultis = 21, targetJudges = 35;
+  examQuestions = [
+    ...singles.slice(0, targetSingles),
+    ...multis.slice(0, targetMultis),
+    ...judges.slice(0, targetJudges)
+  ].slice(0, 100);
+  examAnswers = {}; examIdx = 0; examStartTime = Date.now();
+  document.querySelectorAll('#homePage,#resultPage,#reviewPage,#practicePage').forEach(el=>el.classList.add('hidden'));
+  document.getElementById('examPage').classList.remove('hidden');
+  document.getElementById('backHome').classList.remove('hidden');
+  renderExam(); startTimer();
+}
+function startTimer() {
+  clearInterval(examTimer);
+  examTimer = setInterval(() => {
+    const elapsed = Math.floor((Date.now()-examStartTime)/1000);
+    const remaining = examDuration - elapsed;
+    if (remaining <= 0) { clearInterval(examTimer); submitExam(); return; }
+    const m=Math.floor(remaining/60), s=remaining%60;
+    const el=document.getElementById('examTimer');
+    el.textContent='⏱ '+m+':'+String(s).padStart(2,'0');
+    el.classList.toggle('normal', remaining>=300);
+  }, 500);
+}
+function renderExam() {
+  const q=examQuestions[examIdx], total=examQuestions.length;
+  document.getElementById('examProgress').textContent='第 '+(examIdx+1)+' / '+total+' 题';
+  let h='<div class="question-card"><div class="question-meta"><div class="q-num">'+(examIdx+1)+'</div>'+typeBadge(q.type)+'</div><div class="q-stem">'+formatStem(q.stem)+'</div>';
+  if (q.type==='判断题') {
+    const ua=examAnswers[examIdx];
+    h+='<div class="judge-btns">';
+    h+='<div class="judge-btn '+(ua==='A'?'selected':'')+'" onclick="selectJudge('+examIdx+',\'A\')">✓ 正确</div>';
+    h+='<div class="judge-btn '+(ua==='B'?'selected':'')+'" onclick="selectJudge('+examIdx+',\'B\')">✗ 错误</div>';
+    h+='</div>';
+  } else {
+    const isM=q.type==='多选题';
+    if (isM) h+='<div class="multi-hint">📢 多选题：可选择多个选项</div>';
+    h+='<div class="options-list">';
+    q.options.forEach(o=>{
+      const ua=examAnswers[examIdx]||'', sel=ua.includes(o.label);
+      h+='<div class="option-item '+(sel?'selected':'')+'" onclick="selectOption('+examIdx+',\''+o.label+'\','+isM+')"><div class="option-label">'+o.label+'</div><div class="option-text">'+o.text+'</div></div>';
+    });
+    h+='</div>';
+  }
+  h+='</div>';
+  document.getElementById('examContainer').innerHTML=h;
+  document.getElementById('examPrev').disabled=examIdx===0;
+  document.getElementById('examNext').textContent=examIdx===total-1?'最后一题':'下一题';
+}
+function selectOption(idx,label,isMulti) {
+  if(!isMulti){examAnswers[idx]=label;}
+  else{let c=examAnswers[idx]||'';if(c.includes(label)){c=c.split('').filter(l=>l!==label).join('');}else{c=(c+label).split('').sort().join('');}examAnswers[idx]=c;}
+  renderExam();
+}
+function selectJudge(idx,val){examAnswers[idx]=val;renderExam();}
+function examPrev(){if(examIdx>0){examIdx--;renderExam();}}
+function examNext(){if(examIdx<examQuestions.length-1){examIdx++;renderExam();}}
+
+function submitExam() {
+  clearInterval(examTimer);
+  let correct=0;
+  examQuestions.forEach((q,i)=>{ if(examAnswers[i]===q.answer){correct++;} else {addWrongId(q.id);} });
+  updateWrongBadge();
+  const total=examQuestions.length, score=Math.round(correct/total*100), passed=score>=90;
+  const elapsed=Math.floor((Date.now()-examStartTime)/1000), m=Math.floor(elapsed/60), s=elapsed%60;
+  document.getElementById('examPage').classList.add('hidden');
+  document.getElementById('resultPage').classList.remove('hidden');
+  document.getElementById('scorePanel').innerHTML=
+    '<div class="score-circle '+(passed?'pass':'fail')+'">'+score+'分</div>'+
+    '<div style="font-size:20px;font-weight:700;margin-bottom:8px;">'+(passed?'🎉 恭喜通过':'❌ 未通过')+'</div>'+
+    '<div style="color:var(--text-secondary);margin-bottom:8px;">通过线：90分</div>'+
+    '<div class="score-detail">'+
+      '<div class="score-detail-item"><div class="num" style="color:var(--success);">'+correct+'</div><div class="label">答对</div></div>'+
+      '<div class="score-detail-item"><div class="num" style="color:var(--danger);">'+(total-correct)+'</div><div class="label">答错</div></div>'+
+      '<div class="score-detail-item"><div class="num" style="color:var(--primary);">'+m+':'+String(s).padStart(2,'0')+'</div><div class="label">用时</div></div>'+
+    '</div>';
+}
+
+// ===== Exam Review =====
+function reviewExam(){reviewIdx=0;document.getElementById('resultPage').classList.add('hidden');document.getElementById('reviewPage').classList.remove('hidden');renderReview();}
+function renderReview() {
+  const q=examQuestions[reviewIdx], total=examQuestions.length;
+  document.getElementById('reviewProgress').textContent='解析 '+(reviewIdx+1)+' / '+total;
+  const ua=examAnswers[reviewIdx]||'未作答', isC=ua===q.answer;
+  let h='<div class="question-card"><div class="question-meta"><div class="q-num">'+(reviewIdx+1)+'</div>'+typeBadge(q.type)+'</div><div class="q-stem">'+formatStem(q.stem)+'</div>';
+  if(q.type==='判断题'){
+    h+='<div class="judge-btns">';
+    h+='<div class="judge-btn '+(q.answer==='A'?'reveal-correct':'')+'" style="'+(q.answer==='A'?'':'opacity:0.4;')+'">✓ 正确</div>';
+    h+='<div class="judge-btn '+(q.answer==='B'?'reveal-correct':'')+'" style="'+(q.answer==='B'?'':'opacity:0.4;')+'">✗ 错误</div>';
+    h+='</div>';
+  } else {
+    h+='<div class="options-list">';
+    q.options.forEach(o=>{
+      const ic=q.answer.includes(o.label), iu=(ua||'').includes(o.label);
+      let cls=''; if(ic)cls='correct'; else if(iu)cls='wrong';
+      h+='<div class="option-item '+cls+'"><div class="option-label">'+o.label+'</div><div class="option-text">'+o.text+'</div></div>';
+    });
+    h+='</div>';
+  }
+  h+='<div class="answer-panel">'+
+    '<div class="judge-result '+(isC?'right':'wrong')+'">'+(isC?'✅ 回答正确':'❌ 回答错误')+'</div>'+
+    '<div class="answer-row"><span class="answer-label">你的答案：</span><span class="answer-value" style="color:'+(isC?'var(--success)':'var(--danger)')+';">'+(ua==='未作答'?'未作答':formatAnswerDisplay(q,ua))+'</span></div>'+
+    '<div class="answer-row"><span class="answer-label">正确答案：</span><span class="answer-value correct-answer">'+formatAnswerDisplay(q,q.answer)+'</span></div>'+
+    '<div class="answer-row"><span class="answer-label">答案解释：</span><span class="answer-value explanation-detail">'+getExplanation(q)+'</span></div>'+
+    '<div class="answer-row"><span class="answer-label">速记口诀：</span><span class="answer-value mnemonic">'+q.mnemonic+'</span></div>'+
+  '</div></div>';
+  document.getElementById('reviewContainer').innerHTML=h;
+  document.getElementById('reviewPrev').disabled=reviewIdx===0;
+  document.getElementById('reviewNext').textContent=reviewIdx===total-1?'完成':'下一题';
+}
+function reviewPrev(){if(reviewIdx>0){reviewIdx--;renderReview();}}
+function reviewNext(){if(reviewIdx<examQuestions.length-1){reviewIdx++;renderReview();}}
+
+// ===== Practice =====
+function startPractice() {
+  practiceMode='practice'; currentFilter='all'; practiceList=[...QUESTIONS]; practiceIdx=0; practiceAnswered={};
+  document.querySelectorAll('#homePage,#examPage,#resultPage,#reviewPage').forEach(el=>el.classList.add('hidden'));
+  document.getElementById('practicePage').classList.remove('hidden');
+  document.getElementById('backHome').classList.remove('hidden');
+  document.getElementById('practiceFilters').classList.remove('hidden');
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector('.filter-btn').classList.add('active');
+  document.getElementById('practiceFilter').textContent='全部题型';
+  renderPractice();
+}
+function startWrongPractice() {
+  practiceMode='wrong';
+  const wids=getWrongIds();
+  document.querySelectorAll('#homePage,#examPage,#resultPage,#reviewPage').forEach(el=>el.classList.add('hidden'));
+  document.getElementById('practicePage').classList.remove('hidden');
+  document.getElementById('backHome').classList.remove('hidden');
+  document.getElementById('practiceFilters').classList.add('hidden');
+  if(wids.length===0){
+    document.getElementById('practiceProgress').textContent='暂无题目';
+    document.getElementById('practiceFilter').textContent='错题练习';
+    document.getElementById('practiceContainer').innerHTML='<div class="empty-state"><div class="icon">🎉</div><div style="font-size:20px;font-weight:700;margin-bottom:8px;">还没有错题</div><div>去做模拟测试或刷题练习，答错的题会自动收集到这里</div></div>';
+    return;
+  }
+  practiceList=QUESTIONS.filter(q=>wids.includes(q.id)); practiceIdx=0; practiceAnswered={};
+  document.getElementById('practiceFilter').textContent='错题练习（'+practiceList.length+' 题）';
+  renderPractice();
+}
+function filterPractice(filter,btn){
+  currentFilter=filter;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(filter==='all'){practiceList=[...QUESTIONS];document.getElementById('practiceFilter').textContent='全部题型';}
+  else if(filter==='wrong'){const wids=getWrongIds();practiceList=QUESTIONS.filter(q=>wids.includes(q.id));document.getElementById('practiceFilter').textContent='错题重练（'+practiceList.length+' 题）';}
+  else{practiceList=QUESTIONS.filter(q=>q.type===filter);document.getElementById('practiceFilter').textContent=filter;}
+  practiceIdx=0;
+  if(practiceList.length===0){
+    document.getElementById('practiceContainer').innerHTML='<div class="question-card" style="text-align:center;color:var(--text-secondary);">暂无题目</div>';
+    document.getElementById('practiceProgress').textContent='无题目';
+  } else { renderPractice(); }
+}
+function renderPractice() {
+  if(practiceList.length===0) return;
+  const q=practiceList[practiceIdx], total=practiceList.length;
+  document.getElementById('practiceProgress').textContent='第 '+(practiceIdx+1)+' / '+total+' 题';
+  const answered=practiceAnswered[q.id], showR=answered!==undefined, isC=answered===q.answer;
+  const isM=q.type==='多选题';
+  const pending=practicePending[q.id]||'';
+  let h='<div class="question-card"><div class="question-meta"><div class="q-num">'+(practiceIdx+1)+'</div>'+typeBadge(q.type)+'</div><div class="q-stem">'+formatStem(q.stem)+'</div>';
+  if(q.type==='判断题'){
+    h+='<div class="judge-btns">';
+    let cA='',cB='';
+    if(showR){if(q.answer==='A')cA='reveal-correct';else if(answered==='A')cA='wrong';if(q.answer==='B')cB='reveal-correct';else if(answered==='B')cB='wrong';}
+    h+='<div class="judge-btn '+cA+'" onclick="practiceJudge('+q.id+',\'A\')">✓ 正确</div>';
+    h+='<div class="judge-btn '+cB+'" onclick="practiceJudge('+q.id+',\'B\')">✗ 错误</div>';
+    h+='</div>';
+  } else if(isM){
+    if(!showR) h+='<div class="multi-hint">📢 多选题：可选择多个选项，选完后点击「确认答案」</div>';
+    h+='<div class="options-list">';
+    q.options.forEach(o=>{
+      let cls='';
+      if(showR){const ic=q.answer.includes(o.label),iu=(answered||'').includes(o.label);if(ic)cls='correct';else if(iu)cls='wrong';}
+      else if(pending.includes(o.label))cls='selected';
+      const oc=showR?'':'onclick="practiceToggle('+q.id+',\''+o.label+'\')"';
+      h+='<div class="option-item '+cls+'" '+oc+'><div class="option-label">'+o.label+'</div><div class="option-text">'+o.text+'</div></div>';
+    });
+    h+='</div>';
+    if(!showR){
+      h+='<div style="margin-top:16px;text-align:center;">';
+      h+='<button class="btn btn-primary" '+(pending.length<2?'disabled':'')+' onclick="practiceConfirm('+q.id+')">确认答案</button>';
+      h+='</div>';
+    }
+  } else {
+    h+='<div class="options-list">';
+    q.options.forEach(o=>{
+      let cls='';
+      if(showR){const ic=q.answer.includes(o.label),iu=(answered||'').includes(o.label);if(ic)cls='correct';else if(iu)cls='wrong';}
+      const oc=showR?'':'onclick="practiceSingleSelect('+q.id+',\''+o.label+'\')"';
+      h+='<div class="option-item '+cls+'" '+oc+'><div class="option-label">'+o.label+'</div><div class="option-text">'+o.text+'</div></div>';
+    });
+    h+='</div>';
+  }
+  if(showR){
+    if(isC)removeWrongId(q.id); else addWrongId(q.id);
+    h+='<div class="answer-panel">'+
+      '<div class="judge-result '+(isC?'right':'wrong')+'">'+(isC?'✅ 回答正确':'❌ 回答错误')+'</div>'+
+      '<div class="answer-row"><span class="answer-label">正确答案：</span><span class="answer-value correct-answer">'+formatAnswerDisplay(q,q.answer)+'</span></div>'+
+      '<div class="answer-row"><span class="answer-label">答案解释：</span><span class="answer-value explanation-detail">'+getExplanation(q)+'</span></div>'+
+      '<div class="answer-row"><span class="answer-label">速记口诀：</span><span class="answer-value mnemonic">'+q.mnemonic+'</span></div>'+
+    '</div>';
+  }
+  h+='</div>';
+  document.getElementById('practiceContainer').innerHTML=h;
+  document.getElementById('practicePrev').disabled=practiceIdx===0;
+  document.getElementById('practiceNext').textContent=practiceIdx===total-1?'完成':'下一题';
+}
+function practiceToggle(qid,label){
+  let c=practicePending[qid]||'';
+  if(c.includes(label)){c=c.split('').filter(l=>l!==label).join('');}
+  else{c=(c+label).split('').sort().join('');}
+  practicePending[qid]=c;
+  renderPractice();
+}
+function practiceConfirm(qid){
+  const pending=practicePending[qid]||'';
+  if(pending.length<2)return;
+  const q=practiceList[practiceIdx];
+  practiceAnswered[qid]=pending;
+  renderPractice();
+  showCheer(pending===q.answer);
+}
+function practiceSingleSelect(qid,label){
+  const q=practiceList[practiceIdx];
+  practiceAnswered[qid]=label;
+  renderPractice();
+  showCheer(label===q.answer);
+}
+function practiceJudge(qid,val){
+  const q=practiceList[practiceIdx];
+  practiceAnswered[qid]=val;
+  renderPractice();
+  showCheer(val===q.answer);
+}
+function practicePrev(){if(practiceIdx>0){practiceIdx--;renderPractice();}}
+function practiceNext(){if(practiceIdx<practiceList.length-1){practiceIdx++;renderPractice();}}
+
+// Clear stale wrong questions from the bug where multi-select was auto-judging
+localStorage.setItem('wrongQuestions', '[]');
+
+// ===== Cheer System =====
+const NAME = '熊杰';
+const CHEERS_RIGHT = [
+  { emoji: '👍', text: '厉害！', sub: NAME + '，这题稳稳拿下' },
+  { emoji: '🎯', text: '可以啊！', sub: NAME + '，思路完全正确' },
+  { emoji: '⭐', text: '太棒啦！', sub: NAME + '，知识点掌握得很扎实' },
+  { emoji: '✨', text: '优秀！', sub: NAME + '，又拿下一题，继续保持' },
+  { emoji: '🚀', text: '漂亮！', sub: NAME + '，这道直接通关' },
+  { emoji: '👏', text: '不错不错！', sub: NAME + '，看得出来认真思考了' },
+];
+const CHEERS_WRONG = [
+  { emoji: '💪', text: '没关系！', sub: NAME + '，这次踩坑了，记住这个点下次就不会错啦' },
+  { emoji: '📖', text: '没事！', sub: NAME + '，错题正是查漏补缺的好机会，再看一眼解析～' },
+  { emoji: '🤔', text: '小小的失误', sub: NAME + '，弄懂原理，下一题一定没问题' },
+  { emoji: '🌱', text: '别灰心！', sub: NAME + '，学习本来就是不断试错的过程，加油' },
+  { emoji: '💡', text: '这题有点绕哦', sub: NAME + '，看完解析，下次轻松搞定' },
+  { emoji: '📝', text: '一次答错不算什么', sub: NAME + '，复盘一下，收获反而更大💪' },
+];
+function showCheer(isRight) {
+  const pool = isRight ? CHEERS_RIGHT : CHEERS_WRONG;
+  const pick = pool[Math.floor(Math.random() * pool.length)];
+  const popup = document.getElementById('cheerPopup');
+  popup.className = 'cheer-popup ' + (isRight ? 'right' : 'wrong');
+  document.getElementById('cheerEmoji').textContent = pick.emoji;
+  document.getElementById('cheerText').textContent = pick.text;
+  document.getElementById('cheerSub').textContent = pick.sub;
+  popup.classList.add('show');
+  clearTimeout(window._cheerTimer);
+  window._cheerTimer = setTimeout(() => { popup.classList.remove('show'); }, 1400);
+}
+
+updateWrongBadge();
+</script>
+</body>
+</html>
