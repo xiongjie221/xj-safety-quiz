@@ -178,6 +178,7 @@ body {
   background: var(--card); font-size: 14px; cursor: pointer; transition: all 0.15s;
 }
 .filter-btn.active { border-color: var(--primary); background: #e8f0fe; color: var(--primary); font-weight: 600; }
+.filter-toggle { background: none; border: none; color: var(--text-secondary); font-size: 13px; cursor: pointer; padding: 4px 12px; }
 .back-btn { display: inline-flex; align-items: center; gap: 6px; background: none; border: none; color: white; font-size: 15px; cursor: pointer; opacity: 0.9; }
 .back-btn:hover { opacity: 1; }
 .hidden { display: none !important; }
@@ -279,7 +280,10 @@ body {
     <div class="exam-progress" id="practiceProgress">第 1 题</div>
     <div style="font-size:14px;color:var(--text-secondary);" id="practiceFilter">全部题型</div>
   </div>
-  <div class="filter-bar" id="practiceFilters" style="padding-top:16px;">
+  <div style="text-align:center;padding:6px 0;">
+    <button class="filter-toggle" id="filterToggle" onclick="toggleFilters()">筛选 ▸</button>
+  </div>
+  <div class="filter-bar hidden" id="practiceFilters">
     <button class="filter-btn active" onclick="filterPractice('all', this)">全部</button>
     <button class="filter-btn" onclick="filterPractice('单选题', this)">单选题</button>
     <button class="filter-btn" onclick="filterPractice('多选题', this)">多选题</button>
@@ -7640,12 +7644,24 @@ function reviewPrev(){if(reviewIdx>0){reviewIdx--;renderReview();}}
 function reviewNext(){if(reviewIdx<examQuestions.length-1){reviewIdx++;renderReview();}}
 
 // ===== Practice =====
+function toggleFilters() {
+  const bar = document.getElementById('practiceFilters');
+  const btn = document.getElementById('filterToggle');
+  if (bar.classList.contains('hidden')) {
+    bar.classList.remove('hidden');
+    btn.textContent = '筛选 ▾';
+  } else {
+    bar.classList.add('hidden');
+    btn.textContent = '筛选 ▸';
+  }
+}
 function startPractice() {
   practiceMode='practice'; currentFilter='all'; practiceList=[...QUESTIONS]; practiceIdx=0; practiceAnswered={};
   document.querySelectorAll('#homePage,#examPage,#resultPage,#reviewPage').forEach(el=>el.classList.add('hidden'));
   document.getElementById('practicePage').classList.remove('hidden');
   document.getElementById('backHome').classList.remove('hidden');
-  document.getElementById('practiceFilters').classList.remove('hidden');
+  document.getElementById('practiceFilters').classList.add('hidden');
+  const ft=document.getElementById('filterToggle'); if(ft)ft.textContent='筛选 ▸';
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
   document.querySelector('.filter-btn').classList.add('active');
   document.getElementById('practiceFilter').textContent='全部题型';
